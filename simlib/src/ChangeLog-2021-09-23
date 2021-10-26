@@ -1,0 +1,2787 @@
+diff --git a/INSTALL b/INSTALL
+index 2509317..b9c64b0 100644
+--- a/INSTALL
++++ b/INSTALL
+@@ -5,7 +5,7 @@ Installation instructions for SimLib/C++ (Simulation Library for C++)
+ 
+ This is SIMLIB3 experimental pre-release version
+ Warning: Compilation method will change in future
+-Last modified: 2018-10-25
++Last modified: 2021-09-23
+ 
+ ----------------------------------------------------------------
+ How to build and install SIMLIB/C++
+@@ -37,14 +37,18 @@ This version of SIMLIB has been compiled and tested on:
+ 
+   System                         Compiler
+   ------------------------------------------------
++  Linux 4.19.0,Intel i5-4690/64b (GCC 11.1.0)
++  Linux 4.19.0,Intel i5-4690/64b (GCC 8.3.0)
++  Linux 4.19.0,Intel i5-4690/32b (GCC 8.3.0)
++  Linux 4.19.0,Intel i5-4690/64b (clang 7.0.1)
++
++Old versions tested on:
+   Linux 4.9.0, Intel i5-4690/64b (GCC 6.3.0)
+   Linux 4.9.0, Intel i5-4690     (clang 3.8.1)
+   Linux 4.9.0, Intel i5-4690     (GCC 8.1.0)
+   Linux 2.6.32, Core2/64bit      (GCC 4.6.0)
+   Linux 2.6.26, Athlon64/64bit   (GCC 4.5.0)
+   Linux 2.6.26, Athlon64/64bit   (GCC 4.3.2)
+-
+-Old versions tested on:
+   Linux 2.6.24, Core2duo/32bit   (gcc-4.3.0)
+   Linux 2.6.18, Athlon64/64bit   (gcc-4.1.2)
+   Linux 2.6.18, Athlon64/32bit   (gcc-4.1.2)
+diff --git a/README b/README
+index b4a7ec9..26b342b 100644
+--- a/README
++++ b/README
+@@ -3,9 +3,9 @@
+ This is README for SIMLIB/C++ (Simulation Library for C++)
+ ----------------------------------------------------------------
+ 
+-Version 3.07 - 2018-10-19
++Version 3.08 - 2021-09-23
+ 
+-Copyright (c) 1991-2018 Petr Peringer
++Copyright (c) 1991-2021 Petr Peringer
+ Copyright (c) 1996-1997 David Leska     [numerical methods OO framework]
+ Copyright (c) 2000-2001 David Martinek  [fuzzy extension]
+ 
+@@ -14,7 +14,7 @@ SIMLIB/C++ is the SIMulation LIBrary for C++ programming language. You can
+ create models directly in C++ language using predefined simulation tools from
+ the library. SIMLIB allows object-oriented description of models based on
+ basic simulation abstractions. Current version allows a description of
+-continuous, discrete, combined, 2D/3D vector, and fuzzy models.
++continuous, discrete, hybrid(combined), 2D/3D vector, and fuzzy models.
+ 
+ The library works with GNU C++ compiler under Linux (primary development
+ platform), FreeBSD, and MS Windows (all platforms on i386+ and x86_64). The
+@@ -22,7 +22,8 @@ library is portable with one exception -- process switching code depends on
+ setjmp/longjmp and single line of assembly language.
+ 
+ SIMLIB/C++ is developed at the Faculty of Information Technology, Brno
+-University of Technology. The development started in 1991.
++University of Technology. The development started in 1991. The code is
++experimental and is not intended for serious use.
+ 
+ 
+ ----------------------------------------------------------------
+diff --git a/TODO b/TODO
+index 428a6dc..e80f90f 100644
+--- a/TODO
++++ b/TODO
+@@ -5,6 +5,8 @@ TODO list for SIMLIB/C++
+ (Try to use C++20 coroutines and modules. Coroutines in C++20 are not optimal
+ for SIMLIB - they are "stackless")
+ 
++Name -- use base method and RTTI info if name is empty --- at least in debug mode
++
+ use C++11 random library (Mersenne twister)
+ 
+ script for editing the version (at 4 places)
+@@ -34,7 +36,7 @@ DONE - try clang++
+ 
+ - create both 32 and 64 bit versions, use suffix -32, -64, and symlink ?
+ 
+-- add reference counting to aContiBlock (+rename) OR use shared_ptr<>
++- LEAKS: add reference counting to aContiBlock (+rename) OR use shared_ptr<>
+ 
+ - tests for performance (regression tests, calendar)
+ 
+diff --git a/src/TEST-BY.txt b/src/TEST-BY.txt
+index cdab797..b44f88a 100644
+--- a/src/TEST-BY.txt
++++ b/src/TEST-BY.txt
+@@ -54,3 +54,4 @@ Wed 7 Oct 16:23:25 CEST 2020 by g++-10.2 (GCC) 10.2.0
+ Thu 16 Sep 18:08:49 CEST 2021 by g++ (Debian 8.3.0-6) 8.3.0
+ Thu 16 Sep 19:57:49 CEST 2021 by g++-11.1 (GCC) 11.1.0
+ Fri 17 Sep 16:17:05 CEST 2021 by g++ (Debian 8.3.0-6) 8.3.0
++Thu 23 Sep 16:28:55 CEST 2021 by g++ (Debian 8.3.0-6) 8.3.0
+diff --git a/src/_test_.output-- b/src/_test_.output--
+index 3683fbd..317e2ee 100644
+--- a/src/_test_.output--
++++ b/src/_test_.output--
+@@ -1,4 +1,3 @@
+-DEBUG: T=0          MODULE#38 init
+ DEBUG: T=0          Lim::Lim(in,l=-1,h=1,tga=1)
+ DEBUG: T=0          Function1::Function1(in)
+ DEBUG: T=0          ctr: _Mul[PTR](in1,in2)
+@@ -16,6 +15,52 @@ DEBUG: T=0          Process::Process(0)
+ DEBUG: T=0          Entity#1{PTR}::Entity(0)
+ DEBUG: T=0          Event::Event(0)
+ DEBUG: T=0          Sampler::Sampler(PTR,1)
++DEBUG: T=0          MODULE#1 initialization
++DEBUG: T=0          MODULE#2 initialization
++DEBUG: T=0          MODULE#3 initialization
++DEBUG: T=0          MODULE#4 initialization
++DEBUG: T=0          MODULE#5 initialization
++DEBUG: T=0          MODULE#6 initialization
++DEBUG: T=0          MODULE#7 initialization
++DEBUG: T=0          MODULE#8 initialization
++DEBUG: T=0          MODULE#9 initialization
++DEBUG: T=0          MODULE#10 initialization
++DEBUG: T=0          MODULE#11 initialization
++DEBUG: T=0          MODULE#12 initialization
++DEBUG: T=0          MODULE#13 initialization
++DEBUG: T=0          constructor[IntegrationMethod]: "abm4"((nil))
++DEBUG: T=0          constructor[MultiStepMethod](abm4, rkf5)
++DEBUG: T=0          constructor[IntegrationMethod]: "euler"(PTR)
++DEBUG: T=0          constructor[StatusIntegrationMethod]: "euler"
++DEBUG: T=0          constructor[IntegrationMethod]: "fw"(PTR)
++DEBUG: T=0          constructor[IntegrationMethod]: "rke"(PTR)
++DEBUG: T=0          constructor[StatusIntegrationMethod]: "rke"
++DEBUG: T=0          constructor[IntegrationMethod]: "rkf3"(PTR)
++DEBUG: T=0          constructor[IntegrationMethod]: "rkf5"(PTR)
++DEBUG: T=0          constructor[IntegrationMethod]: "rkf8"(PTR)
++DEBUG: T=0          MODULE#14 initialization
++DEBUG: T=0          MODULE#15 initialization
++DEBUG: T=0          MODULE#16 initialization
++DEBUG: T=0          MODULE#17 initialization
++DEBUG: T=0          MODULE#18 initialization
++DEBUG: T=0          MODULE#19 initialization
++DEBUG: T=0          MODULE#20 initialization
++DEBUG: T=0          MODULE#21 initialization
++DEBUG: T=0          MODULE#22 initialization
++DEBUG: T=0          MODULE#23 initialization
++DEBUG: T=0          MODULE#24 initialization
++DEBUG: T=0          MODULE#25 initialization
++DEBUG: T=0          MODULE#26 initialization
++DEBUG: T=0          MODULE#27 initialization
++DEBUG: T=0          MODULE#28 initialization
++DEBUG: T=0          MODULE#29 initialization
++DEBUG: T=0          MODULE#30 initialization
++DEBUG: T=0          MODULE#31 initialization
++DEBUG: T=0          MODULE#32 initialization
++DEBUG: T=0          MODULE#33 initialization
++DEBUG: T=0          MODULE#34 initialization
++DEBUG: T=0          MODULE#35 initialization
++DEBUG: T=0          MODULE#36 initialization
+ Model _TEST_ --- test model for SIMLIB/C++ 
+ DEBUG: T=0          
+ 	 ************************* Init(0,5) #1 
+@@ -23,7 +68,7 @@ DEBUG: T=0
+ DEBUG: T=0          CalendarList::create()
+ DEBUG: T=0          CalendarList::CalendarList()
+ DEBUG: T=0          SIMLIB_atexit(PTR)
+-DEBUG: T=0          CalendarList::clear(true)
++DEBUG: T=0          CalendarList::clear(destroy=true)
+ DEBUG: T=0          IntegratorContainer::InitAll)
+ DEBUG: T=0          StatusContainer::InitAll)
+ DEBUG: T=0          StatusContainer::EvaluateAll)
+@@ -33,9 +78,7 @@ DEBUG: T=0          SetStep: StepSize = 0.1 .. 1
+ DEBUG: T=0          SetAccuracy: maxerror = 1e-05 + 0.01 * X 
+ DEBUG: T=0          Entity#2{PTR}::Entity(0)
+ DEBUG: T=0          Process::Process(0)
+-DEBUG: T=0          Process#2.Activate()
+ DEBUG: T=0          Process#2.Activate(0)
+-DEBUG: T=0          Process#0.Activate()
+ DEBUG: T=0          Process#0.Activate(0)
+ DEBUG: T=0          
+ 	 ********** Run() --- START 
+@@ -45,19 +88,16 @@ DEBUG: T=0          StatusContainer::InitAll)
+ DEBUG: T=0          StatusContainer::EvaluateAll)
+ DEBUG: T=0          StatusContainer::EvaluateAll)
+ DEBUG: T=0          IntegratorContainer::EvaluateAll)
+-DEBUG: T=0          Event#1.Activate()
+ DEBUG: T=0          Event#1.Activate(0)
+ DEBUG: T=0          PTR===Process#2._Run() status=PREPARED
+-DEBUG: T=0           --- Thread START 
++DEBUG: T=0          | --- Process::Behavior() START 
+ DEBUG: T=0          Process#2.Wait(1)
+-DEBUG: T=0          Process#2.Activate(1)
+-DEBUG: T=0           --- Thread INTERRUPTED PTR.context=PTR, size=116
++DEBUG: T=0          | --- Process::Behavior() INTERRUPT PTR.context=PTR, size=116
+ DEBUG: T=0          PTR===Process#2._Run() RETURN status=INTERRUPTED
+ DEBUG: T=0          PTR===Process#0._Run() status=PREPARED
+-DEBUG: T=0           --- Thread START 
++DEBUG: T=0          | --- Process::Behavior() START 
+ DEBUG: T=0          Process#0.Wait(1)
+-DEBUG: T=0          Process#0.Activate(1)
+-DEBUG: T=0           --- Thread INTERRUPTED PTR.context=PTR, size=116
++DEBUG: T=0          | --- Process::Behavior() INTERRUPT PTR.context=PTR, size=116
+ DEBUG: T=0          PTR===Process#0._Run() RETURN status=INTERRUPTED
+ DEBUG: T=0          Sampler::Behavior()
+ 0.000000  0.500000  0.500000
+@@ -148,16 +188,14 @@ DEBUG: T=1          StatusContainer::NtoL()
+ DEBUG: T=1           Step length = 1 
+ DEBUG: T=1          ==================== continuous step END 1
+ DEBUG: T=1          PTR===Process#2._Run() status=INTERRUPTED
+-DEBUG: T=1           --- Thread CONTINUE 
++DEBUG: T=1          | --- Process::Behavior() CONTINUE 
+ DEBUG: T=1          Process#2.Wait(1)
+-DEBUG: T=1          Process#2.Activate(2)
+-DEBUG: T=1           --- Thread INTERRUPTED PTR.context=PTR, size=116
++DEBUG: T=1          | --- Process::Behavior() INTERRUPT PTR.context=PTR, size=116
+ DEBUG: T=1          PTR===Process#2._Run() RETURN status=INTERRUPTED
+ DEBUG: T=1          PTR===Process#0._Run() status=INTERRUPTED
+-DEBUG: T=1           --- Thread CONTINUE 
++DEBUG: T=1          | --- Process::Behavior() CONTINUE 
+ DEBUG: T=1          Process#0.Wait(1)
+-DEBUG: T=1          Process#0.Activate(2)
+-DEBUG: T=1           --- Thread INTERRUPTED PTR.context=PTR, size=116
++DEBUG: T=1          | --- Process::Behavior() INTERRUPT PTR.context=PTR, size=116
+ DEBUG: T=1          PTR===Process#0._Run() RETURN status=INTERRUPTED
+ DEBUG: T=1          Sampler::Behavior()
+ 1.000000  0.963239  0.959708
+@@ -226,42 +264,42 @@ DEBUG: T=2          StatusContainer::NtoL()
+ DEBUG: T=2           Step length = 1 
+ DEBUG: T=2          ==================== continuous step END 2
+ DEBUG: T=2          PTR===Process#2._Run() status=INTERRUPTED
+-DEBUG: T=2           --- Thread CONTINUE 
++DEBUG: T=2          | --- Process::Behavior() CONTINUE 
+ DEBUG: T=2          Process#2._WaitUntil(false)
+ DEBUG: T=2          WaitUntilList.Insert(Process#2)
+ DEBUG: T=2          WaitUntilList::WaitUntilList()
+ DEBUG: T=2          SIMLIB_atexit(PTR)
+ DEBUG: T=2          Process#2.Passivate()
+-DEBUG: T=2           --- Thread INTERRUPTED PTR.context=PTR, size=132
++DEBUG: T=2          | --- Process::Behavior() INTERRUPT PTR.context=PTR, size=132
+ DEBUG: T=2          PTR===Process#2._Run() RETURN status=INTERRUPTED
+ DEBUG: T=2          WaitUntilList::WU_hook
+ DEBUG: T=2          PTR===Process#2._Run() status=INTERRUPTED
+-DEBUG: T=2           --- Thread CONTINUE 
++DEBUG: T=2          | --- Process::Behavior() CONTINUE 
+ DEBUG: T=2          Process#2._WaitUntil(false)
+ DEBUG: T=2          Process#2.Passivate()
+-DEBUG: T=2           --- Thread INTERRUPTED PTR.context=PTR, size=132
++DEBUG: T=2          | --- Process::Behavior() INTERRUPT PTR.context=PTR, size=132
+ DEBUG: T=2          PTR===Process#2._Run() RETURN status=INTERRUPTED
+ DEBUG: T=2          WaitUntilList::WU_hook
+ DEBUG: T=2          PTR===Process#0._Run() status=INTERRUPTED
+-DEBUG: T=2           --- Thread CONTINUE 
++DEBUG: T=2          | --- Process::Behavior() CONTINUE 
+ DEBUG: T=2          Process#0._WaitUntil(false)
+ DEBUG: T=2          WaitUntilList.Insert(Process#0)
+ DEBUG: T=2          Process#0.Passivate()
+-DEBUG: T=2           --- Thread INTERRUPTED PTR.context=PTR, size=132
++DEBUG: T=2          | --- Process::Behavior() INTERRUPT PTR.context=PTR, size=132
+ DEBUG: T=2          PTR===Process#0._Run() RETURN status=INTERRUPTED
+ DEBUG: T=2          WaitUntilList::WU_hook
+ DEBUG: T=2          PTR===Process#2._Run() status=INTERRUPTED
+-DEBUG: T=2           --- Thread CONTINUE 
++DEBUG: T=2          | --- Process::Behavior() CONTINUE 
+ DEBUG: T=2          Process#2._WaitUntil(false)
+ DEBUG: T=2          Process#2.Passivate()
+-DEBUG: T=2           --- Thread INTERRUPTED PTR.context=PTR, size=132
++DEBUG: T=2          | --- Process::Behavior() INTERRUPT PTR.context=PTR, size=132
+ DEBUG: T=2          PTR===Process#2._Run() RETURN status=INTERRUPTED
+ DEBUG: T=2          WaitUntilList::WU_hook
+ DEBUG: T=2          PTR===Process#0._Run() status=INTERRUPTED
+-DEBUG: T=2           --- Thread CONTINUE 
++DEBUG: T=2          | --- Process::Behavior() CONTINUE 
+ DEBUG: T=2          Process#0._WaitUntil(false)
+ DEBUG: T=2          Process#0.Passivate()
+-DEBUG: T=2           --- Thread INTERRUPTED PTR.context=PTR, size=132
++DEBUG: T=2          | --- Process::Behavior() INTERRUPT PTR.context=PTR, size=132
+ DEBUG: T=2          PTR===Process#0._Run() RETURN status=INTERRUPTED
+ DEBUG: T=2          WaitUntilList::WU_hook
+ DEBUG: T=2          Sampler::Behavior()
+@@ -269,17 +307,17 @@ DEBUG: T=2          Sampler::Behavior()
+ DEBUG: T=2          Event#1.Activate(3)
+ DEBUG: T=2          WaitUntilList::WU_hook
+ DEBUG: T=2          PTR===Process#2._Run() status=INTERRUPTED
+-DEBUG: T=2           --- Thread CONTINUE 
++DEBUG: T=2          | --- Process::Behavior() CONTINUE 
+ DEBUG: T=2          Process#2._WaitUntil(false)
+ DEBUG: T=2          Process#2.Passivate()
+-DEBUG: T=2           --- Thread INTERRUPTED PTR.context=PTR, size=132
++DEBUG: T=2          | --- Process::Behavior() INTERRUPT PTR.context=PTR, size=132
+ DEBUG: T=2          PTR===Process#2._Run() RETURN status=INTERRUPTED
+ DEBUG: T=2          WaitUntilList::WU_hook
+ DEBUG: T=2          PTR===Process#0._Run() status=INTERRUPTED
+-DEBUG: T=2           --- Thread CONTINUE 
++DEBUG: T=2          | --- Process::Behavior() CONTINUE 
+ DEBUG: T=2          Process#0._WaitUntil(false)
+ DEBUG: T=2          Process#0.Passivate()
+-DEBUG: T=2           --- Thread INTERRUPTED PTR.context=PTR, size=132
++DEBUG: T=2          | --- Process::Behavior() INTERRUPT PTR.context=PTR, size=132
+ DEBUG: T=2          PTR===Process#0._Run() RETURN status=INTERRUPTED
+ DEBUG: T=2          WaitUntilList::WU_hook
+ DEBUG: T=2          ==================== continuous step BEGIN 2
+@@ -350,17 +388,17 @@ DEBUG: T=3          Sampler::Behavior()
+ DEBUG: T=3          Event#1.Activate(4)
+ DEBUG: T=3          WaitUntilList::WU_hook
+ DEBUG: T=3          PTR===Process#2._Run() status=INTERRUPTED
+-DEBUG: T=3           --- Thread CONTINUE 
++DEBUG: T=3          | --- Process::Behavior() CONTINUE 
+ DEBUG: T=3          Process#2._WaitUntil(false)
+ DEBUG: T=3          Process#2.Passivate()
+-DEBUG: T=3           --- Thread INTERRUPTED PTR.context=PTR, size=132
++DEBUG: T=3          | --- Process::Behavior() INTERRUPT PTR.context=PTR, size=132
+ DEBUG: T=3          PTR===Process#2._Run() RETURN status=INTERRUPTED
+ DEBUG: T=3          WaitUntilList::WU_hook
+ DEBUG: T=3          PTR===Process#0._Run() status=INTERRUPTED
+-DEBUG: T=3           --- Thread CONTINUE 
++DEBUG: T=3          | --- Process::Behavior() CONTINUE 
+ DEBUG: T=3          Process#0._WaitUntil(false)
+ DEBUG: T=3          Process#0.Passivate()
+-DEBUG: T=3           --- Thread INTERRUPTED PTR.context=PTR, size=132
++DEBUG: T=3          | --- Process::Behavior() INTERRUPT PTR.context=PTR, size=132
+ DEBUG: T=3          PTR===Process#0._Run() RETURN status=INTERRUPTED
+ DEBUG: T=3          WaitUntilList::WU_hook
+ DEBUG: T=3          ==================== continuous step BEGIN 3
+@@ -431,23 +469,21 @@ DEBUG: T=4          Sampler::Behavior()
+ DEBUG: T=4          Event#1.Activate(5)
+ DEBUG: T=4          WaitUntilList::WU_hook
+ DEBUG: T=4          PTR===Process#2._Run() status=INTERRUPTED
+-DEBUG: T=4           --- Thread CONTINUE 
++DEBUG: T=4          | --- Process::Behavior() CONTINUE 
+ DEBUG: T=4          Process#2._WaitUntil(true)
+ DEBUG: T=4          WaitUntilList.Get(); // "Process#2" 
+ DEBUG: T=4          Process#2._WaitUntil(true)
+ DEBUG: T=4          Process#2.Wait(5)
+-DEBUG: T=4          Process#2.Activate(9)
+-DEBUG: T=4           --- Thread INTERRUPTED PTR.context=PTR, size=84
++DEBUG: T=4          | --- Process::Behavior() INTERRUPT PTR.context=PTR, size=84
+ DEBUG: T=4          PTR===Process#2._Run() RETURN status=INTERRUPTED
+ DEBUG: T=4          WaitUntilList::WU_hook
+ DEBUG: T=4          PTR===Process#0._Run() status=INTERRUPTED
+-DEBUG: T=4           --- Thread CONTINUE 
++DEBUG: T=4          | --- Process::Behavior() CONTINUE 
+ DEBUG: T=4          Process#0._WaitUntil(true)
+ DEBUG: T=4          WaitUntilList.Get(); // "Process#0" 
+ DEBUG: T=4          Process#0._WaitUntil(true)
+ DEBUG: T=4          Process#0.Wait(5)
+-DEBUG: T=4          Process#0.Activate(9)
+-DEBUG: T=4           --- Thread INTERRUPTED PTR.context=PTR, size=84
++DEBUG: T=4          | --- Process::Behavior() INTERRUPT PTR.context=PTR, size=84
+ DEBUG: T=4          PTR===Process#0._Run() RETURN status=INTERRUPTED
+ DEBUG: T=4          ==================== continuous step BEGIN 4
+ DEBUG: T=4          IntegrationMethod::Prepare()
+@@ -533,32 +569,29 @@ DEBUG: T=5
+ 	 ********** Run() --- END 
+ 
+ # end of test t=5
+-DEBUG: T=5          Sampler::~Sampler() // "PTR" 
+-DEBUG: T=5          Event::~Event()
+-DEBUG: T=5          Entity#1{PTR}::~Entity()
+-DEBUG: T=5          Process::~Process()
+-DEBUG: T=5          Entity#0{PTR}::~Entity()
+-DEBUG: T=5          destructor: Status[PTR]   #1
+-DEBUG: T=5          StatusContainer::Erase(...)
+-DEBUG: T=5          destructor: Integrator[PTR]  #1
+-DEBUG: T=5          IntegratorContainer::Erase(...)
+-DEBUG: T=5          MODULE#38 
+-DEBUG: T=5          MODULE#37 (atexit.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:23)
+-DEBUG: T=5          MODULE#36 (debug.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:23)
+-DEBUG: T=5          MODULE#35 (entity.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:24)
+-DEBUG: T=5          MODULE#34 (error.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:24)
+-DEBUG: T=5          MODULE#33 
+-DEBUG: T=5          MODULE#32 (link.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:24)
+-DEBUG: T=5          MODULE#31 (list.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:24)
+-DEBUG: T=5          MODULE#30 (name.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:24)
+-DEBUG: T=5          MODULE#29 (object.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:24)
+-DEBUG: T=5          MODULE#28 (print.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:24)
+-DEBUG: T=5          MODULE#27 (run.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:24)
+-DEBUG: T=5          MODULE#26 (sampler.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:25)
+-DEBUG: T=5          MODULE#25 (cond.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:27)
+-DEBUG: T=5          MODULE#24 (fun.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:27)
+-DEBUG: T=5          MODULE#23 (intg.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:27)
+-DEBUG: T=5          MODULE#22 (continuous.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:27)
++DEBUG: T=5          MODULE#36 cleanup (queue.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:02:44)
++DEBUG: T=5          MODULE#35 cleanup (facility.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:02:43)
++DEBUG: T=5          MODULE#34 cleanup (ni_rkf8.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:02:43)
++DEBUG: T=5          MODULE#33 cleanup (ni_rkf5.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:02:43)
++DEBUG: T=5          MODULE#32 cleanup (ni_rkf3.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:02:43)
++DEBUG: T=5          MODULE#31 cleanup (ni_rke.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:02:42)
++DEBUG: T=5          MODULE#30 cleanup (ni_fw.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:02:42)
++DEBUG: T=5          MODULE#29 cleanup (ni_euler.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:02:42)
++DEBUG: T=5          MODULE#28 cleanup (ni_abm4.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:02:42)
++DEBUG: T=5          MODULE#27 cleanup (name.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:02:41)
++DEBUG: T=5          MODULE#26 cleanup (event.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:02:40)
++DEBUG: T=5          MODULE#25 cleanup (error.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:02:40)
++DEBUG: T=5          MODULE#24 cleanup (calendar.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:02:40)
++DEBUG: T=5          MODULE#23 cleanup (atexit.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:03:55)
++DEBUG: T=5          MODULE#22 cleanup (version.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:12:43)
++DEBUG: T=5          MODULE#21 cleanup (waitunti.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:12:43)
++DEBUG: T=5          MODULE#20 cleanup (tstat.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:02:44)
++DEBUG: T=5          MODULE#19 cleanup (store.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:02:44)
++DEBUG: T=5          MODULE#18 cleanup (stat.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:02:44)
++DEBUG: T=5          MODULE#17 cleanup (process.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:12:43)
++DEBUG: T=5          MODULE#16 cleanup (output2.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:02:43)
++DEBUG: T=5          MODULE#15 cleanup (stdblock.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:02:43)
++DEBUG: T=5          MODULE#14 cleanup (output1.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:02:43)
+ DEBUG: T=5          destructor[IntegrationMethod]
+ DEBUG: T=5          destructor[IntegrationMethod]
+ DEBUG: T=5          destructor[IntegrationMethod]
+@@ -567,33 +600,32 @@ DEBUG: T=5          destructor[IntegrationMethod]
+ DEBUG: T=5          destructor[IntegrationMethod]
+ DEBUG: T=5          destructor[MultiStepMethod]
+ DEBUG: T=5          destructor[IntegrationMethod]
+-DEBUG: T=5          MODULE#21 (numint.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:29)
+-DEBUG: T=5          MODULE#20 (output1.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:30)
+-DEBUG: T=5          MODULE#19 (stdblock.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:30)
+-DEBUG: T=5          MODULE#18 (output2.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:30)
+-DEBUG: T=5          MODULE#17 (process.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:31)
+-DEBUG: T=5          MODULE#16 (queue.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:31)
+-DEBUG: T=5          MODULE#15 (stat.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:31)
+-DEBUG: T=5          MODULE#14 (store.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:31)
+-DEBUG: T=5          MODULE#13 (tstat.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:31)
+-DEBUG: T=5          MODULE#12 (waitunti.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:32)
+-DEBUG: T=5          MODULE#11 (version.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:32)
+-DEBUG: T=5          MODULE#10 (calendar.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:23)
+-DEBUG: T=5          MODULE#9 (event.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:24)
+-DEBUG: T=5          MODULE#8 (ni_abm4.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:28)
+-DEBUG: T=5          MODULE#7 (ni_euler.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:28)
+-DEBUG: T=5          MODULE#6 (ni_fw.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:28)
+-DEBUG: T=5          MODULE#5 (ni_rke.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:28)
+-DEBUG: T=5          MODULE#4 (ni_rkf3.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:28)
+-DEBUG: T=5          MODULE#3 (ni_rkf5.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:29)
+-DEBUG: T=5          MODULE#2 (ni_rkf8.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:29)
+-DEBUG: T=5          MODULE#1 (facility.cc, SIMLIB-3.02/debug, Linux/GNU C++, Nov 15 2010 11:33:30)
++DEBUG: T=5          MODULE#13 cleanup (numint.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:02:43)
++DEBUG: T=5          MODULE#12 cleanup (continuous.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:02:42)
++DEBUG: T=5          MODULE#11 cleanup (intg.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:02:42)
++DEBUG: T=5          MODULE#10 cleanup (fun.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:02:42)
++DEBUG: T=5          MODULE#9 cleanup (cond.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:02:42)
++DEBUG: T=5          MODULE#8 cleanup (sampler.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:02:41)
++DEBUG: T=5          MODULE#7 cleanup (run.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:02:41)
++DEBUG: T=5          MODULE#6 cleanup (print.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:02:41)
++DEBUG: T=5          MODULE#5 cleanup (object.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:02:41)
++DEBUG: T=5          MODULE#4 cleanup (list.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:02:41)
++DEBUG: T=5          MODULE#3 cleanup (link.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:02:40)
++DEBUG: T=5          MODULE#2 cleanup (entity.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:02:40)
++DEBUG: T=5          MODULE#1 cleanup (debug.cc, SIMLIB-3.08/debug, Linux/GNU C++, Sep 23 2021 16:02:40)
+ DEBUG: T=5          ATEXIT:
+ DEBUG: T=5          ATEXIT_CALL#0: PTR 
+ DEBUG: T=5          Calendar::delete_instance()
+ DEBUG: T=5          CalendarList::~CalendarList()
+-DEBUG: T=5          CalendarList::clear(true)
+-DEBUG: T=5          Process::~Process()
+-DEBUG: T=5          Entity#2{PTR}::~Entity()
++DEBUG: T=5          CalendarList::clear(destroy=true)
+ DEBUG: T=5          ATEXIT_CALL#1: PTR 
+ DEBUG: T=5          WaitUntilList::~WaitUntilList()
++DEBUG: T=5          Sampler::~Sampler() // "PTR" 
++DEBUG: T=5          Event::~Event()
++DEBUG: T=5          Entity#1{PTR}::~Entity()
++DEBUG: T=5          Process::~Process()
++DEBUG: T=5          Entity#0{PTR}::~Entity()
++DEBUG: T=5          destructor: Status[PTR]   #1
++DEBUG: T=5          StatusContainer::Erase(...)
++DEBUG: T=5          destructor: Integrator[PTR]  #1
++DEBUG: T=5          IntegratorContainer::Erase(...)
+diff --git a/src/algloop.cc b/src/algloop.cc
+index d755380..effb1e1 100644
+--- a/src/algloop.cc
++++ b/src/algloop.cc
+@@ -93,14 +93,16 @@ void AlgLoop::Set(double eps, unsigned long max_it,
+   T0=t_min;
+ }; // AlgLoop::Set2
+ 
++#if 0
+ /// get name of object
+ const char *AlgLoop::Name() const
+ {
+     if (HasName())
+-        return _name;
++        return Name();
+     else
+         return SIMLIB_create_tmp_name("AlgLoop{%p}", this);
+ }
++#endif
+ 
+ ////////////////////////////////////////////////////////////////////////////
+ // Iterations  --  returned value
+diff --git a/src/atexit.cc b/src/atexit.cc
+index a6dad05..827adad 100644
+--- a/src/atexit.cc
++++ b/src/atexit.cc
+@@ -7,6 +7,8 @@
+ //
+ 
+ //
++// atexit module implements module init/clean count and calls all
++// registered functions AFTER all modules are cleaned
+ //
+ 
+ #include "simlib.h"
+@@ -47,7 +49,7 @@ static void SIMLIB_atexit_call() {
+ SIMLIB_module::SIMLIB_module():
+     string(0) {
+     counter++;
+-    DEBUG(DBG_MODULE,("MODULE#%d init",counter));
++    DEBUG(DBG_MODULE,("MODULE#%d initialization",counter));
+ }
+ 
+ // set module id string
+@@ -58,13 +60,11 @@ int SIMLIB_module::Init(const char *s) {
+ 
+ // destructor --- last one calls atexit functions
+ SIMLIB_module::~SIMLIB_module() {
+-    DEBUG(DBG_MODULE,("MODULE#%d %s",counter, string?string:""));
++    DEBUG(DBG_MODULE,("MODULE#%d cleanup %s",counter, string?string:""));
+     if(--counter == 0)
+         SIMLIB_atexit_call();
+ }
+ 
+-
+ }
+ 
+ // end
+-
+diff --git a/src/barrier.cc b/src/barrier.cc
+index 4efce54..f1d4d0d 100644
+--- a/src/barrier.cc
++++ b/src/barrier.cc
+@@ -52,7 +52,7 @@ Barrier::Barrier(const char *name, unsigned height):
+ /// destructor
+ //
+ Barrier::~Barrier() {
+-    Dprintf(("Barrier::~Barrier()  // \"%s\" ", Name()));
++    Dprintf(("Barrier::~Barrier()  // \"%s\" ", Name().c_str()));
+     delete[] waiting;
+ }
+ 
+@@ -61,7 +61,7 @@ Barrier::~Barrier() {
+ //
+ void Barrier::Enter(Entity * e) //TODO without parameter: use Current?
+ {
+-    Dprintf(("Barrier\"%s\".Enter(%s)", Name(), e->Name()));
++    Dprintf(("Barrier\"%s\".Enter(%s)", Name().c_str(), e->Name().c_str()));
+     if (n < maxn - 1) {         // all waiting processes
+         waiting[n++] = e;
+         e->Passivate();
+@@ -77,7 +77,7 @@ void Barrier::Enter(Entity * e) //TODO without parameter: use Current?
+ //
+ bool Barrier::Wait()
+ {
+-    Dprintf(("Barrier\"%s\".Wait() for %s", Name(), Current->Name()));
++    Dprintf(("Barrier\"%s\".Wait() for %s", Name().c_str(), Current->Name().c_str()));
+     if (n < maxn - 1) {         // all waiting processes
+         waiting[n++] = Current;
+         Current->Passivate();
+@@ -111,7 +111,7 @@ int Barrier::Break() {
+ /// Barrier initializtion
+ //
+ void Barrier::Init() {
+-    Dprintf(("%s.Init()", Name()));
++    Dprintf(("%s.Init()", Name().c_str()));
+     if (maxn < 1)
+         Error("Barrier size less than 1");
+     waiting = new Entity *[maxn];       // allocation   maxn-1 ???
+@@ -123,7 +123,7 @@ void Barrier::Init() {
+ /// Change the height of barrier
+ //
+ void Barrier::ChangeHeight(unsigned new_height) {
+-    Dprintf(("%s.ChangeHeight(%u)", Name(), new_height));
++    Dprintf(("%s.ChangeHeight(%u)", Name().c_str(), new_height));
+     if (new_height < n || new_height < 1)
+         Error("Barrier height can not be changed");
+     Entity **new_w = new Entity *[new_height];  // allocation
+@@ -142,7 +142,7 @@ void Barrier::ChangeHeight(unsigned new_height) {
+ /// TODO: what to do with currently waiting passive processes?
+ //
+ void Barrier::Clear() {
+-    Dprintf(("%s.Clear()", Name()));
++    Dprintf(("%s.Clear()", Name().c_str()));
+     for (unsigned i = 0; i < maxn; i++)
+         waiting[i] = nullptr;
+     n = 0;
+@@ -152,10 +152,10 @@ void Barrier::Clear() {
+ /// Print barrier status
+ //
+ void Barrier::Output() const {
+-    Print("Barrier: %s\n", Name());
++    Print("Barrier: %s\n", Name().c_str());
+     for (unsigned i = 0; i < maxn; i++)
+         if (waiting[i])
+-            Print("%3d: [%p] %s\n", i, waiting[i], waiting[i]->Name());
++            Print("%3d: [%p] %s\n", i, waiting[i], waiting[i]->Name().c_str());
+         else
+             Print("%3d: empty\n", i);
+     Print("\n");
+diff --git a/src/calendar.cc b/src/calendar.cc
+index 9637ff8..d2bd5c6 100644
+--- a/src/calendar.cc
++++ b/src/calendar.cc
+@@ -11,6 +11,7 @@
+ ///
+ /// <br> uses double-linked list and dynamic calendar queue [brown1988]
+ //
++// FIXME: Warning: experimental code, needs improvements
+ // TODO: improve interface
+ // TODO: reference-counting entities?
+ 
+@@ -28,7 +29,7 @@
+ 
+ // this is for measuring performance of operations only
+ namespace {
+-#include "rdtsc.h"    // RDTSC instruction on i586+
++#include "rdtsc.h"    // RDTSC instruction on i586+ FIXME
+ 
+ static unsigned long long T_MEASURE;
+ 
+@@ -440,7 +441,7 @@ inline void EventNotice::Destroy(EventNotice *en)
+ ///  schedule entity e at time t
+ void CalendarList::ScheduleAt(Entity *e, double t)
+ {
+-//  Dprintf(("CalendarList::ScheduleAt(%s,%g)", e->Name(), t));
++//  Dprintf(("CalendarList::ScheduleAt(%s,%g)", e->Name().c_str(), t));
+   if(t<Time)
+       SIMLIB_error(SchedulingBeforeTime);
+   l.insert(e,t);
+@@ -473,7 +474,7 @@ Entity *CalendarList::GetFirst()
+ /// remove entity e from calendar
+ Entity * CalendarList::Get(Entity * e)
+ {
+-//  Dprintf(("CalendarList::Get(e=%s): size=%u",e->Name(), Size()));
++//  Dprintf(("CalendarList::Get(e=%s): size=%u",e->Name().c_str(), Size()));
+ 
+   if(Empty())
+     SIMLIB_error(EmptyCalendar);  // internal --> TODO:remove
+@@ -644,7 +645,7 @@ CalendarQueue::CalendarQueue():
+ /// schedule
+ void CalendarQueue::ScheduleAt(Entity *e, double t)
+ {
+-    Dprintf(("CalendarQueue::ScheduleAt(%s,%g)", e->Name(), t));
++    Dprintf(("CalendarQueue::ScheduleAt(%s,%g)", e->Name().c_str(), t));
+     if(t<Time)
+         SIMLIB_error(SchedulingBeforeTime);
+ 
+@@ -733,7 +734,7 @@ Entity * CalendarQueue::GetFirst()
+ /// <br>called only if rescheduling
+ Entity * CalendarQueue::Get(Entity * e)
+ {
+-//  Dprintf(("CalendarQueue::Get(e=%s)",e->Name()));
++//  Dprintf(("CalendarQueue::Get(e=%s)",e->Name().c_str()));
+   if(Empty())
+     SIMLIB_error(EmptyCalendar);  // internal use only --> TODO:remove
+   if(e->Idle ())
+@@ -1137,7 +1138,7 @@ void CalendarListImplementation::debug_print() // print of list contents
+   int n=0;
+   for(iterator i = begin(); i!=end(); ++i) {
+     Print("  [%03u]:", ++n );                   // order
+-    Print("\t %s", (*i)->entity->Name() );      // print entity ID
++    Print("\t %s", (*i)->entity->Name().c_str() );      // print entity ID
+     Print("\t at=%g", (*i)->time );             // schedule time
+     Print("\n");
+   }
+diff --git a/src/cond.cc b/src/cond.cc
+index 4ddbb72..3c64a7a 100644
+--- a/src/cond.cc
++++ b/src/cond.cc
+@@ -150,6 +150,7 @@ void SIMLIB_DoConditions()
+   }
+ }
+ 
++#if 0
+ ////////////////////////////////////////////////////////////////////////////
+ /// get name of object
+ const char *Condition::Name() const {
+@@ -170,7 +171,7 @@ const char *ConditionDown::Name() const {
+   if(HasName()) return _name;
+   else return SIMLIB_create_tmp_name("ConditionDown{%p}", this);
+ }
+-
++#endif 
+ 
+ } // namespace
+ 
+diff --git a/src/continuous.cc b/src/continuous.cc
+index 846d79a..19320f1 100644
+--- a/src/continuous.cc
++++ b/src/continuous.cc
+@@ -141,10 +141,12 @@ public:
+     Dprintf(("dtr: _Add[%p]", this));
+   }
+   virtual double Value() override { return Input1Value() + Input2Value(); }
++#if 0
+   virtual const char *Name() const {
+       if(HasName()) return _name;
+       else return SIMLIB_create_tmp_name("_Add{%p}", this);
+   }
++#endif
+ };
+ 
+ 
+@@ -161,10 +163,12 @@ public:
+     Dprintf(("dtr: _Sub[%p]", this));
+   }
+   virtual double Value() override { return Input1Value() - Input2Value(); }
++#if 0
+   virtual const char *Name() const {
+       if(HasName()) return _name;
+       else return SIMLIB_create_tmp_name("_Sub{%p}", this);
+   }
++#endif
+ };
+ 
+ 
+@@ -181,10 +185,12 @@ public:
+     Dprintf(("dtr: _Mul[%p]", this));
+   }
+   virtual double Value() override { return Input1Value() * Input2Value(); }
++#if 0
+   virtual const char *Name() const {
+       if(HasName()) return _name;
+       else return SIMLIB_create_tmp_name("_Mul{%p}", this);
+   }
++#endif
+ };
+ 
+ 
+@@ -201,10 +207,12 @@ public:
+     Dprintf(("dtr: _Div[%p]", this));
+   }
+   virtual double Value() override { return Input1Value() / Input2Value(); }
++#if 0
+   virtual const char *Name() const {
+       if(HasName()) return _name;
+       else return SIMLIB_create_tmp_name("_Div{%p}", this);
+   }
++#endif
+ };
+ 
+ 
+@@ -237,10 +245,12 @@ public:
+     Dprintf(("dtr: _UMinus[%p]", this));
+   }
+   virtual double Value() override    { return -InputValue(); }
++#if 0
+   virtual const char *Name() const {
+       if(HasName()) return _name;
+       else return SIMLIB_create_tmp_name("_UMinus{%p}", this);
+   }
++#endif
+ };
+ 
+ 
+@@ -257,7 +267,7 @@ class _Time: public aContiBlock {
+  public:
+   _Time() {}
+   virtual double Value () override { return Time; }
+-  virtual const char *Name() const { return "T(Time)"; }
++  virtual std::string Name() const { return "T(Time)"; }
+ };
+ 
+ /// block -- simulation time
+diff --git a/src/entity.cc b/src/entity.cc
+index 4b7269f..7c733d8 100644
+--- a/src/entity.cc
++++ b/src/entity.cc
+@@ -52,10 +52,9 @@ Entity::~Entity() {
+   Entity::_Number--;          // # of entities in model
+ }
+ 
+-///  entity activation at given time
++/// entity activation at given time
+ void Entity::Activate(double t)
+ {
+-  Dprintf(("%s.Activate(%g)", Name(), t));
+   if (!Idle()) {                // rescheduling
+     SQS::Get(this);             // remove from calendar
+   }
+@@ -68,7 +67,6 @@ void Entity::Activate(double t)
+ //
+ void Entity::Passivate()
+ {
+-  Dprintf(("%s.Passivate()",Name()));
+   if(!Idle())           // if scheduled
+       SQS::Get(this);   // remove from calendar
+ }
+@@ -98,7 +96,7 @@ void Entity::Out()
+ ///  passivate and destroy entity
+ void Entity::Terminate()
+ {
+-  Dprintf(("%s.Terminate()",Name()));
++  Dprintf(("%s.Terminate()",Name().c_str()));
+   if(!Idle())
+       SQS::Get(this);  // remove from calendar
+ 
+@@ -106,6 +104,7 @@ void Entity::Terminate()
+       delete this;     // destroy entity (if not currently running Behavior)
+ }
+ 
++#if 0
+ ////////////////////////////////////////////////////////////////////////////
+ /// get name - either explicit or default "Entity#{ptr}"
+ const char *Entity::Name() const
+@@ -114,6 +113,7 @@ const char *Entity::Name() const
+   if(*name) return name; // return explicit name
+   else      return SIMLIB_create_tmp_name("Entity%lu{%p}", _Ident, this);
+ }
++#endif
+ 
+ } // namespace
+ 
+diff --git a/src/event.cc b/src/event.cc
+index b31f214..4f67def 100644
+--- a/src/event.cc
++++ b/src/event.cc
+@@ -39,7 +39,7 @@ Event::~Event()
+ 
+ ////////////////////////////////////////////////////////////////////////////
+ /// activation method, called from simulation control algorithm
+-void Event::_Run() throw()
++void Event::_Run() noexcept
+ {
+   Behavior();
+   if(Idle()) // not scheduled
+@@ -51,21 +51,30 @@ void Event::_Run() throw()
+ /// <br> Should not be used. It is there only for backwards compatibility.
+ void Event::Terminate()
+ {
+-  Dprintf(("%s.Terminate()",Name()));
++  Dprintf(("%s.Terminate()",Name().c_str()));
+   if(!Idle())          // if scheduled
+       SQS::Get(this);  // remove from calendar
+   if(isAllocated() && this != SIMLIB_Current)
+       delete this;     // destroy entity (if not currently running Behavior)
+ }
+ 
++// Event activation (scheduling) at time t
++void Event::Activate(double t)
++{
++  Dprintf(("Event#%lu.Activate(%g)",_Ident,t));
++  Entity::Activate(t);
++}
++
++#if 1
+ ////////////////////////////////////////////////////////////////////////////
+ /// get name of event. It is generic "Event#" if not explicitly named
+-const char *Event::Name() const
++std::string Event::Name() const
+ {
+-    const char *name = SimObject::Name();
+-    if(*name) return name; // has explicit name
+-    else      return SIMLIB_create_tmp_name("Event#%lu", _Ident);
++    const std::string name = SimObject::Name();
++    if(!name.empty())   return name; // has explicit name
++    else                return SIMLIB_create_tmp_name("Event#%lu", _Ident);
+ }
++#endif
+ 
+ } // namespace
+ 
+diff --git a/src/facility.cc b/src/facility.cc
+index aa24ab4..6a19d6f 100644
+--- a/src/facility.cc
++++ b/src/facility.cc
+@@ -58,7 +58,7 @@ Facility::Facility(const char *name)
+ 
+ Facility::Facility(Queue * queue)
+ {
+-    Dprintf(("Facility::Facility(%s)", queue->Name()));
++    Dprintf(("Facility::Facility(%s)", queue->Name().c_str()));
+     _Qflag = 0;
+     CHECKQUEUE(queue);
+     Q1 = queue;
+@@ -68,7 +68,7 @@ Facility::Facility(Queue * queue)
+ 
+ Facility::Facility(const char *name, Queue * queue)
+ {
+-    Dprintf(("Facility::Facility(\"%s\",%s)", name, queue->Name()));
++    Dprintf(("Facility::Facility(\"%s\",%s)", name, queue->Name().c_str()));
+     SetName(name);
+     _Qflag = 0;
+     CHECKQUEUE(queue);
+@@ -82,8 +82,8 @@ Facility::Facility(const char *name, Queue * queue)
+ //
+ Facility::~Facility()
+ {
+-    Dprintf(("Facility::~Facility()  // \"%s\" ", Name()));
+-    //Clear();
++    Dprintf(("Facility::~Facility()  // \"%s\" ", Name().c_str()));
++    Clear();
+     if (OwnQueue())
+         delete Q1;              // delete input queue
+     delete Q2;
+@@ -113,7 +113,7 @@ void Facility::Seize(Entity * e, ServicePriority_t sp)
+ //
+ // TODO: remove parameter e, use Current
+ //
+-    Dprintf(("%s.Seize(%s,%u)", Name(), e->Name(), (unsigned) sp));
++    Dprintf(("%s.Seize(%s,%u)", Name().c_str(), e->Name().c_str(), (unsigned) sp));
+     CHECKENTITY(e);
+     if (e != Current)
+         SIMLIB_error(EntityRefError);
+@@ -138,7 +138,7 @@ void Facility::Seize(Entity * e, ServicePriority_t sp)
+         e->Passivate();         // wait in queue, activated by Release()
+         // =======================================================
+         // continue after activation
+-        Dprintf(("%s.Seize(%s,%u) from Q1", Name(), e->Name(),
++        Dprintf(("%s.Seize(%s,%u) from Q1", Name().c_str(), e->Name().c_str(),
+                  (unsigned) sp));
+     }
+ }
+@@ -153,7 +153,7 @@ void Facility::Release(Entity * e)
+ //
+ // TODO: remove parameter e, use Current
+ //
+-    Dprintf(("%s.Release(%s)", Name(), e->Name()));
++    Dprintf(("%s.Release(%s)", Name().c_str(), e->Name().c_str()));
+     CHECKENTITY(e);
+     if (!in)
+         SIMLIB_error(ReleaseNotSeized); // not seized
+@@ -176,7 +176,7 @@ void Facility::Release(Entity * e)
+         Entity *ent;
+         ent = static_cast<Entity *>(Q2->GetFirst());        // remove from queue
+         Dprintf(("%s.Seize(%s,%u) from Q2",
+-                 Name(), ent->Name(), (unsigned) ent->_SPrio));
++                 Name().c_str(), ent->Name().c_str(), (unsigned) ent->_SPrio));
+         in = ent;               // seize again
+         tstat(1);
+         tstat.n--;              // correction !!!
+@@ -202,10 +202,10 @@ void Facility::QueueIn(Entity * e, ServicePriority_t sp)
+ //
+ // TODO: remove parameter e, use Current ???
+ //
+-    Dprintf((" %s --> Q1 of %s ", e->Name(), Name()));
++    Dprintf((" %s --> Q1 of %s ", e->Name().c_str(), Name().c_str()));
+     CHECKENTITY(e);
+     e->_SPrio = sp;
+-#if  0                          // _INS_FROM_BEGIN_SLOWER
++#if  0                          // _INS_FROM_BEGIN_SLOWER ?
+     Queue::iterator p = Q1->begin();
+     Queue::iterator end = Q1->end();
+     ServicePriority_t Sprio = e->_SPrio;
+@@ -245,7 +245,7 @@ void Facility::QueueIn(Entity * e, ServicePriority_t sp)
+ //
+ void Facility::QueueIn2(Entity * e)
+ {
+-    Dprintf((" %s --> Q2 of %s", e->Name(), Name()));
++    Dprintf((" %s --> Q2 of %s", e->Name().c_str(), Name().c_str()));
+     ServicePriority_t ps = e->_SPrio;
+     Queue::iterator p = Q2->begin();
+     for (; p != Q2->end()
+@@ -256,7 +256,7 @@ void Facility::QueueIn2(Entity * e)
+             && static_cast<Entity *>(*p)->_SPrio == ps
+             && static_cast<Entity *>(*p)->Priority >= prio;    // higher priority first
+          ++p) { /*empty*/ }
+-    // next sorting -- _RestTime????###
++    // next sorting -- _RestTime? FIXME ###
+     Q2->PredIns(e, p);
+ }
+ 
+@@ -265,9 +265,9 @@ void Facility::QueueIn2(Entity * e)
+ //
+ void Facility::Clear()
+ {
+-    Dprintf(("%s.Clear()", Name()));
+-    //////// check !!! ###
+-    // only own queues!!!
++    Dprintf(("%s.Clear()", Name().c_str()));
++    // FIXME needs checking
++    // clean only own queues!
+     if (OwnQueue())
+         Q1->Clear();
+     Q2->Clear();
+diff --git a/src/fun.cc b/src/fun.cc
+index 5889ffc..4b40b3d 100644
+--- a/src/fun.cc
++++ b/src/fun.cc
+@@ -42,10 +42,12 @@ double Function1::Value() {
+   return ret;
+ }
+ 
++#if 0
+ const char *Function1::Name() const {
+   if(HasName()) return _name;
+   else return SIMLIB_create_tmp_name("Function1{%p}", this);
+ }
++#endif
+ 
+ ////////////////////////////////////////////////////////////////////////////
+ /// constructor --- functions with two arguments
+@@ -61,10 +63,12 @@ double Function2::Value() {
+   return ret;
+ }
+ 
++#if 0
+ const char *Function2::Name() const {
+   if(HasName()) return _name;
+   else return SIMLIB_create_tmp_name("Function2{%p}", this);
+ }
++#endif
+ 
+ 
+ ////////////////////////////////////////////////////////////////////////////
+diff --git a/src/graph.cc b/src/graph.cc
+index ee2543d..55b07eb 100644
+--- a/src/graph.cc
++++ b/src/graph.cc
+@@ -54,7 +54,7 @@ void Graph::Sample()
+ {
+   // prozatimni
+   double value = in.Value();
+-  Print("Graph'%s': %g \n", Name(), value);
++  Print("Graph'%s': %g \n", Name().c_str(), value);
+ }
+ 
+ 
+@@ -85,7 +85,7 @@ Graph::Graph(char *_name, Input i, double dTime) : in(i), TimeStep(dTime)
+ //
+ Graph::~Graph()
+ {
+-  Dprintf(("Graph::~Graph() // \"%s\" ", Name()));
++  Dprintf(("Graph::~Graph() // \"%s\" ", Name().c_str()));
+   if(this==First)
+     First = Next;
+   else
+diff --git a/src/histo.cc b/src/histo.cc
+index 9e65e50..1635185 100644
+--- a/src/histo.cc
++++ b/src/histo.cc
+@@ -83,7 +83,7 @@ Histogram::Histogram(const char *n, double l, double s, unsigned c) :
+ //
+ Histogram::~Histogram()
+ {
+-  Dprintf(("Histogram::~Histogram() // \"%s\" ", Name()));
++  Dprintf(("Histogram::~Histogram() // \"%s\" ", Name().c_str()));
+   delete[] dptr;
+ }
+ 
+diff --git a/src/internal.h b/src/internal.h
+index 5fb063c..b1c9350 100644
+--- a/src/internal.h
++++ b/src/internal.h
+@@ -64,11 +64,12 @@ class SIMLIB_module { // internal class for SIMLIB cleanup (atexit)
+  public:
+   SIMLIB_module();
+   int Init(const char *s);
+-  ~SIMLIB_module(); // last can do ATEXIT ?
++  ~SIMLIB_module(); // last? module can do ATEXIT cleaning
+ };
+ 
+ ////////////////////////////////////////////////////////////////////////////
+ //! Create single global registration object in each SIMLIB module.
++/// Should be first initialized object in the module
+ static SIMLIB_module SIMLIB_module_id;
+ 
+ //! values indicate current phase of experiment
+@@ -143,7 +144,7 @@ extern const SIMLIB_Phase_t &Phase;
+         ", " __DATE__ " " __TIME__                       \
+         ")"                                              \
+       );                                                 \
+-   _Pragma("GCC diagnostic pop") 
++   _Pragma("GCC diagnostic pop")
+ 
+ // SIMLIB atexit function (for internal use only)
+ typedef void (*SIMLIB_atexit_function_t)();
+@@ -156,13 +157,13 @@ void SIMLIB_atexit(SIMLIB_atexit_function_t p);
+ #include "errors.h" // error messages (generated by program generr)
+ 
+ /// print specific error messages
+-void SIMLIB_error(const enum _ErrEnum ErrMsgNum);
++[[noreturn]] void SIMLIB_error(const enum _ErrEnum ErrMsgNum);
+ 
+ /// print formatted error messages
+-void SIMLIB_error(const char *fmt, ... );
++[[noreturn]] void SIMLIB_error(const char *fmt, ... );
+ 
+ /// print internal error messages
+-void SIMLIB_error(const char *file, const int line);
++[[noreturn]] void SIMLIB_error(const char *file, const int line);
+ #define SIMLIB_internal_error() SIMLIB_error(__FILE__, __LINE__)
+ 
+ /// print warnings
+@@ -226,7 +227,7 @@ namespace SQS {
+ /// macro for simple assignement to internal time variables
+ #define _SetTime(t,x) (SIMLIB_##t = x)
+ 
+-void SIMLIB_Dynamic();               // optimize!
++void SIMLIB_Dynamic();               // TODO: optimize!
+ void SIMLIB_DoActions();             // dispatch events and processes
+ void SIMLIB_ContinueInit();          // initialize variables
+ void SIMLIB_DoConditions();          // perform state events
+@@ -322,8 +323,8 @@ class AlgLoopDetector {
+ 
+ 
+ ////////////////////////////////////////////////////////////////////////////
+-// NAME subsystem - experimental
+-const char *SIMLIB_create_tmp_name(const char *fmt, ...);
++// printf-like function for creating name strings
++std::string SIMLIB_create_tmp_name(const char *fmt, ...);
+ 
+ } // namespace
+ 
+diff --git a/src/intg.cc b/src/intg.cc
+index c9bcc2c..ae28088 100644
+--- a/src/intg.cc
++++ b/src/intg.cc
+@@ -253,6 +253,7 @@ double Integrator::Value()
+ }
+ 
+ 
++#if 0
+ const char *Integrator::Name() const
+ {
+     if (HasName())
+@@ -260,6 +261,7 @@ const char *Integrator::Name() const
+     else
+         return SIMLIB_create_tmp_name("Integrator{%p}", this);
+ }
++#endif
+ 
+ /**********************************************************/
+ /*****  Outline members of class IntegratorContainer  *****/
+@@ -451,6 +453,7 @@ double Status::Value()
+ }
+ 
+ 
++#if 0
+ const char *Status::Name() const
+ {
+     if (HasName())
+@@ -458,6 +461,7 @@ const char *Status::Name() const
+     else
+         return SIMLIB_create_tmp_name("Status{%p}", this);
+ }
++#endif
+ 
+ ////////////////////////////////////////////////////////////////////////////
+ // virtual void Status::Eval() -- evaluate without loop detection ###
+diff --git a/src/list.cc b/src/list.cc
+index 1053251..3e97939 100644
+--- a/src/list.cc
++++ b/src/list.cc
+@@ -45,7 +45,7 @@ List::List(const char *name) : Link(this,this,this), n(0)
+ //  destructor
+ //
+ List::~List() {
+-  Dprintf(("List::~List() // \"%s\" ",Name()));
++  Dprintf(("List::~List() // \"%s\" ",Name().c_str()));
+   clear();
+   head = 0; // this is important due to check in ~Link
+ }
+diff --git a/src/name.cc b/src/name.cc
+index dadae61..75d32bf 100644
+--- a/src/name.cc
++++ b/src/name.cc
+@@ -39,13 +39,13 @@ SIMLIB_IMPLEMENTATION;
+ 
+ /////////////////////////////////////////////////////////////////////////////
+ /// assign name to object
+-void SetName(SimObject & o, const char *name)
++void SetName(SimObject & o, const std::string &name)
+ {
+     o.SetName(name);
+ }
+ 
+ /// assign name to object
+-void SetName(SimObject * o, const char *name)
++void SetName(SimObject * o, const std::string &name)
+ {
+     o->SetName(name);
+ }
+@@ -63,35 +63,28 @@ void RemoveName(SimObject * o)
+ }
+ 
+ /// get name of object
+-const char *GetName(SimObject & o)
++std::string GetName(SimObject & o)
+ {
+     return o.Name();
+ }
+ 
+ /// get name of object
+-const char *GetName(SimObject * o)
++std::string GetName(SimObject * o)
+ {
+     return o->Name();
+ }
+ 
+-/// function to create temporary name in special static buffer
+-/// (the number and length of temporary names is limited)
++/// printf-like function to create temporary name
++/// (the length of temporary names is limited)
+ /// <br> used only for printing
+-// TODO: this is insecure, try to return std::string ?
+-const char *SIMLIB_create_tmp_name(const char *fmt, ...)
++std::string SIMLIB_create_tmp_name(const char *fmt, ...)
+ {
+-    const int number = 4;
+-    static char s[number][128]; // for small models only
+-    static int index = 0;
+-    int i = index;
+-    index = (index+1) % number; // circular buffer pointer
+-
++    static char s[256];
+     va_list va;
+     va_start(va, fmt);
+-    vsprintf(s[i], fmt, va);
++    vsnprintf(s, sizeof(s), fmt, va);
+     va_end(va);
+-
+-    return s[i];
++    return s;
+ }
+ 
+ } // namespace
+diff --git a/src/object.cc b/src/object.cc
+index bd2ae0f..1615554 100644
+--- a/src/object.cc
++++ b/src/object.cc
+@@ -12,6 +12,7 @@
+ 
+ #include "simlib.h"
+ #include "internal.h"
++#include <unordered_map>          // used by name dictionary
+ 
+ ////////////////////////////////////////////////////////////////////////////
+ namespace simlib3 {
+@@ -22,15 +23,60 @@ SIMLIB_IMPLEMENTATION;
+ // static flag for IsAllocated()
+ static bool SimObject_allocated = false;
+ 
++// NameDict singleton: dictionary for partial SimObject->name mapping
++// Naming is not performance sensitive part of SIMLIB/C++
++// We use this approach to save memory (64bit: sizeof(std::string)==32)
++class NameDict {
++    using TNameDict = std::unordered_map<SimObject*,std::string>;
++    static TNameDict *dict;
++  public:
++    NameDict() {
++        if(dict==nullptr) {     // can be created before construction
++            dict = new TNameDict;
++        }
++    }
++    // Set name of object
++    // can be used before singleton construction
++    // Warning: do not use in destructors!
++    void Set(SimObject *o, const std::string &name) {
++        if(dict==nullptr) {
++            dict = new TNameDict;
++        }
++        (*dict)[o] = name;
++    }
++    std::string Get(const SimObject *o) const {
++        if(dict==nullptr)
++            return ""; // name dictionary not created -> empty name
++        TNameDict::iterator it = dict->find(const_cast<SimObject*>(o));
++        if(it == dict->end())  // not found
++            return ""; // empty name
++        return it->second;
++    }
++    void Erase(SimObject *o) {
++        if(dict!=nullptr)
++            dict->erase(o);
++    }
++    ~NameDict() {       // remove dictionary, all named objects -> ""
++        delete dict;
++        dict=nullptr;   // important for Get called after dict destruction
++    }
++};
++
++static NameDict name_dict; // SINGLETON, possible problems (empty names) if used after destruction
++
++NameDict::TNameDict *NameDict::dict = nullptr; // static member initialization
++
+ ////////////////////////////////////////////////////////////////////////////
+ //! allocate memory for object
++// TODO: optimize for small objects?
+ void *SimObject::operator new(size_t size) {
++  void *ptr;
+ //  try {
+-  void *ptr = ::new char[size]; // global operator new
+-//  Dprintf(("SimObject::operator new(%u) = %p ", size, ptr));
++    ptr = ::new char[size]; // global operator new
++//  Dprintf(("SimObject::operator new(%u) = %p ", size, ptr));  // ### add extra debug level for this
+ //  }catch(...) { SIMLIB_error(MemoryError); }
+-//  if(!ptr) SIMLIB_error(MemoryError); // for old compilers
+-  SimObject_allocated = true; // update flag
++//  if(!ptr) SIMLIB_error(MemoryError); // only for VERY old compilers
++  SimObject_allocated = true; // update flag (checked in constructor)
+   return ptr;
+ }
+ 
+@@ -53,13 +99,13 @@ void SimObject::operator delete(void *ptr) {
+ //! constructor
+ //
+ SimObject::SimObject() :
+-  _name(0),
++  //_name(0),
+   _flags(0)
+ {
+ //  Dprintf(("SimObject::SimObject() this=%p ", this));
+   if(SimObject_allocated) {
+     SimObject_allocated = false;
+-    _flags |= (1<<_ALLOCATED_FLAG);
++    _flags |= _ALLOCATED_FLAG;
+   }
+ }
+ 
+@@ -69,32 +115,36 @@ SimObject::SimObject() :
+ SimObject::~SimObject()
+ {
+ //  Dprintf(("SimObject::~SimObject() this=%p ", this));
++    if(HasName()) {
++        name_dict.Erase(this);
++    }
+ }
+ 
+ ////////////////////////////////////////////////////////////////////////////
+ //! set the name of object
+ //
+-void SimObject::SetName(const char *name)
++void SimObject::SetName(const std::string &name)
+ {
+-  _name = name;
++    name_dict.Set(this,name);
++    _flags |= _HAS_NAME_FLAG;
+ }
+ 
+ ////////////////////////////////////////////////////////////////////////////
+ //! get the name of object
+ //
+-const char *SimObject::Name() const
++std::string SimObject::Name() const
+ {
+-  if(_name==0) return ""; // no name
+-  return _name;
++    // TODO: use RTTI+pointer if empty name by default
++    return name_dict.Get(this);
+ }
+ 
+ 
+ ////////////////////////////////////////////////////////////////////////////
+ //! print object's info
+-//
++/// TODO: use operator <<
+ void SimObject::Output() const
+ {
+-  Print("SimObject: this=%p, name=%s\n", this, Name());  // default
++  Print("SimObject: this=%p, name=%s\n", this, Name().c_str());  // default
+ }
+ 
+ } // namespace
+diff --git a/src/output1.cc b/src/output1.cc
+index 89e393a..cae51d7 100644
+--- a/src/output1.cc
++++ b/src/output1.cc
+@@ -34,7 +34,7 @@ SIMLIB_IMPLEMENTATION;
+ //
+ void Event::Output() const
+ {
+-    Print(" EVENT %-48s \n", Name());
++    Print(" EVENT %-48s \n", Name().c_str());
+ }
+ 
+ 
+@@ -44,7 +44,7 @@ void Event::Output() const
+ void List::Output() const
+ {
+     Print("+----------------------------------------------------------+\n");
+-    Print("| LIST %-51s |\n", Name());
++    Print("| LIST %-51s |\n", Name().c_str());
+     Print("+----------------------------------------------------------+\n");
+ #ifdef XXX_PRINT_LIST_
+     {
+diff --git a/src/output2.cc b/src/output2.cc
+index de5d08b..2f4bc57 100644
+--- a/src/output2.cc
++++ b/src/output2.cc
+@@ -36,7 +36,7 @@ void Facility::Output() const
+ {
+   char s[100];
+   Print("+----------------------------------------------------------+\n");
+-  Print("| FACILITY %-47s |\n",Name());
++  Print("| FACILITY %-47s |\n",Name().c_str());
+   Print("+----------------------------------------------------------+\n");
+   sprintf(s," Status = %s ", (Busy()) ? "BUSY" : "not BUSY");
+   Print("| %-56s |\n",s);
+@@ -54,16 +54,16 @@ void Facility::Output() const
+   {
+     if (Q1->StatN.Number()>0) // used
+     {
+-      Print("  Input queue '%s.Q1'\n", Name());
++      Print("  Input queue '%s.Q1'\n", Name().c_str());
+       Q1->Output();
+     }
+   }
+   else
+-    Print("  External input queue '%s'\n",Q1->Name());
++    Print("  External input queue '%s'\n",Q1->Name().c_str());
+ 
+   if (Q2->StatN.Number()>0) // used
+   {
+-    Print("  Interrupted services queue '%s.Q2'\n", Name());
++    Print("  Interrupted services queue '%s.Q2'\n", Name().c_str());
+     Q2->Output();
+   }
+ 
+@@ -76,7 +76,7 @@ void Facility::Output() const
+ void Histogram::Output() const
+ {
+   Print("+----------------------------------------------------------+\n");
+-  Print("| HISTOGRAM %-46s |\n",Name());
++  Print("| HISTOGRAM %-46s |\n",Name().c_str());
+   //Print("+----------------------------------------------------------+\n");
+   stat.Output();
+   long sum = 0;
+@@ -107,7 +107,7 @@ void Histogram::Output() const
+ //
+ void Process::Output() const
+ {
+-  Print(" PROCESS %-38s %10s \n", Name(), isCurrent()?"Current":" ");
++  Print(" PROCESS %-38s %10s \n", Name().c_str(), isCurrent()?"Current":" ");
+ }
+ 
+ ////////////////////////////////////////////////////////////////////////////
+@@ -116,7 +116,7 @@ void Process::Output() const
+ void Queue::Output() const
+ {
+   Print("+----------------------------------------------------------+\n");
+-  Print("| QUEUE %-39s %10s |\n", Name(), StatN.Number()?"":"not used");
++  Print("| QUEUE %-39s %10s |\n", Name().c_str(), StatN.Number()?"":"not used");
+   if (StatN.Number() > 0)
+   {
+     Print("+----------------------------------------------------------+\n");
+@@ -166,7 +166,7 @@ void Queue::Output() const
+ void Stat::Output() const
+ {
+   Print("+----------------------------------------------------------+\n");
+-  Print("| STATISTIC %-46s |\n",Name());
++  Print("| STATISTIC %-46s |\n",Name().c_str());
+   Print("+----------------------------------------------------------+\n");
+   if (n==0)
+     Print("|  no record                                               |\n");
+@@ -188,7 +188,7 @@ void Store::Output() const
+ {
+   char s[100];
+   Print("+----------------------------------------------------------+\n");
+-  Print("| STORE %-50s |\n",Name());
++  Print("| STORE %-50s |\n",Name().c_str());
+   Print("+----------------------------------------------------------+\n");
+   sprintf(s," Capacity = %lu  (%lu used, %lu free) ",
+                Capacity(), used, Free());
+@@ -208,12 +208,12 @@ void Store::Output() const
+   {
+     if (Q->StatN.Number()>0) // byla pouzita
+     {
+-      Print("  Input queue '%s.Q'\n", Name());
++      Print("  Input queue '%s.Q'\n", Name().c_str());
+       Q->Output();
+     }
+   }
+   else
+-    Print("  External input queue '%s'\n",Q->Name());
++    Print("  External input queue '%s'\n",Q->Name().c_str());
+   Print("\n");
+ }
+ 
+@@ -223,7 +223,7 @@ void Store::Output() const
+ void TStat::Output() const
+ {
+   Print("+----------------------------------------------------------+\n");
+-  Print("| STATISTIC %-46s |\n", Name());
++  Print("| STATISTIC %-46s |\n", Name().c_str());
+   Print("+----------------------------------------------------------+\n");
+   if (n==0)
+     Print("|  no record                                               |\n");
+diff --git a/src/process.cc b/src/process.cc
+index 0c98d92..12e7083 100644
+--- a/src/process.cc
++++ b/src/process.cc
+@@ -28,7 +28,7 @@
+ //       Process destructor: free stack
+ // TODO: add implementation with stack switching (not copying)
+ //       as compile-time option
+-// TODO: add implementation using Boost coroutines
++// TODO: add implementation using C++20 coroutines?
+ 
+ 
+ ////////////////////////////////////////////////////////////////////////////
+@@ -275,18 +275,20 @@ Process::~Process()
+     }
+ }
+ 
++#if 1
+ ////////////////////////////////////////////////////////////////////////////
+ /// Name of the process
+ /// warning: uses static buffer for generic names
+ /// TODO: use std::string
+-const char *Process::Name() const
++std::string Process::Name() const
+ {
+-    const char *name = SimObject::Name();
+-    if (*name)
++    const std::string name = SimObject::Name();
++    if (!name.empty())
+         return name;            // has explicit name
+     else
+-        return SIMLIB_create_tmp_name("Process#%lu", _Ident);       // generic
++        return SIMLIB_create_tmp_name("Process#%lu", _Ident);
+ }
++#endif
+ 
+ ////////////////////////////////////////////////////////////////////////////
+ /// Interrupt process behavior - this ensures WaitUntil tests
+@@ -294,9 +296,9 @@ const char *Process::Name() const
+ ///          before continuing
+ void Process::Interrupt()
+ {
+-    Dprintf(("%s.Interrupt()", Name()));
++    Dprintf(("Process#%lu.Interrupt()", _Ident));
+     if (!isCurrent())
+-        return;                 // TODO: Error?
++        return;                 // quasiparallel, TODO: Error?
+     // continue after other processes WaitUntil checks
+     // TODO: use >highest priority to eliminate problem
+     Entity::Activate(); // schedule now - can run higher priority
+@@ -309,6 +311,7 @@ void Process::Interrupt()
+ /// Activate process at time t
+ void Process::Activate(double t)
+ {
++    Dprintf(("Process#%lu.Activate(%g)", _Ident, t));
+     Entity::Activate(t);
+     if (!isCurrent())
+         return;
+@@ -320,7 +323,7 @@ void Process::Activate(double t)
+ /// Wait for dtime
+ void Process::Wait(double dtime)
+ {
+-    Dprintf(("%s.Wait(%g)", Name(), dtime));
++    Dprintf(("Process#%lu.Wait(%g)", _Ident, dtime));
+     Entity::Activate(double (Time) + dtime);    // scheduling
+     if (!isCurrent())
+         return;
+@@ -378,6 +381,7 @@ void Process::Into(Queue & q)
+ /// Warning: memory leak if not activated/deleted
+ void Process::Passivate()
+ {
++    Dprintf(("Process#%lu.Passivate()", id()));
+     Entity::Passivate();
+     if (!isCurrent())
+         return;         // passivated by other process
+@@ -390,7 +394,7 @@ void Process::Passivate()
+ /// free memory of the process
+ void Process::Terminate()
+ {
+-    Dprintf(("%s.Terminate()", Name()));
++    Dprintf(("Process#%lu.Terminate()", _Ident));
+ 
+     // remove from all queues  TODO: write special method for this
+     if (Where() != 0) {         // Entity linked in queue
+@@ -431,19 +435,19 @@ void Process::Terminate()
+  *  2) marks current CPU context
+  *  3) calls Behavior()
+  *  4) after interruption of Behavior() returns
+- *  5) if called next, do 1), 2) and move stack pointer (SP)
++ *  5) if called next time, do 1), 2) and move stack pointer (SP)
+  *  6) copy saved stack content back
+- *  7) do longjmp to restore Behavior() execution
++ *  7) do longjmp() to restore Behavior() execution
+  *
+  * @ingroup process
+  */
+-void Process::_Run() throw() // no exceptions
++void Process::_Run() noexcept // no exceptions
+ {
+     // WARNING: all local variables should be volatile (see setjmp manual)
+     static const char * status_strings[] = {
+         "unknown", "PREPARED", "RUNNING", "INTERRUPTED", "TERMINATED"
+     };
+-    Dprintf(("%016p===%s._Run() status=%s", this, Name(), status_strings[_status]));
++    Dprintf(("%016p===Process#%lu._Run() status=%s", this, _Ident, status_strings[_status]));
+ 
+     if (_status != _INTERRUPTED && _status != _PREPARED)
+         SIMLIB_error(ProcessNotInitialized);
+@@ -551,7 +555,7 @@ void Process::_Run() throw() // no exceptions
+         }
+     }
+ 
+-    Dprintf(("%016p===%s._Run() RETURN status=%s", this, Name(), status_strings[_status]));
++    Dprintf(("%016p===Process#%lu._Run() RETURN status=%s", this, _Ident, status_strings[_status]));
+ 
+     //TODO: MOVE to simulation control loop
+     if (isTerminated() && isAllocated()) {
+diff --git a/src/queue.cc b/src/queue.cc
+index 50132de..73f3880 100644
+--- a/src/queue.cc
++++ b/src/queue.cc
+@@ -41,7 +41,7 @@ Queue::Queue(const char *name)
+ //  destructor
+ //
+ Queue::~Queue() {
+-  Dprintf(("Queue{%p}::~Queue() // \"%s\" ", this, Name()));
++  Dprintf(("Queue{%p}::~Queue() // \"%s\" ", this, Name().c_str()));
+ }
+ 
+ ////////////////////////////////////////////////////////////////////////////
+@@ -49,7 +49,7 @@ Queue::~Queue() {
+ //
+ void Queue::Insert(Entity *ent)
+ {
+-  Dprintf(("%s::Insert(%s)", Name(), ent->Name() ));
++  Dprintf(("%s::Insert(%s)", Name().c_str(), ent->Name().c_str() ));
+   Entity::Priority_t prio = ent->Priority;
+   // find (higher priority is first)
+ #if 0 // _INS_FROM_BEGIN
+@@ -72,7 +72,7 @@ void Queue::Insert(Entity *ent)
+ //
+ void Queue::InsFirst(Entity *ent)
+ {
+-  Dprintf(("%s::InsFirst(%s)", Name(), ent->Name() ));
++  Dprintf(("%s::InsFirst(%s)", Name().c_str(), ent->Name().c_str() ));
+   PredIns(ent,begin());
+ }
+ 
+@@ -81,7 +81,7 @@ void Queue::InsFirst(Entity *ent)
+ //
+ void Queue::InsLast(Entity *ent)
+ {
+-  Dprintf(("%s::InsLast(%s)", Name(), ent->Name() ));
++  Dprintf(("%s::InsLast(%s)", Name().c_str(), ent->Name().c_str() ));
+   PredIns(ent,end());
+ }
+ 
+@@ -90,7 +90,7 @@ void Queue::InsLast(Entity *ent)
+ //
+ void Queue::PostIns(Entity *ent, iterator pos)
+ {
+-  Dprintf(("%s::PostIns(%s,pos)", Name(), ent->Name(), *pos ));
++  Dprintf(("%s::PostIns(%s,pos)", Name().c_str(), ent->Name().c_str(), *pos ));
+   if(pos==end())
+      SIMLIB_internal_error(); // add error message
+   PredIns(ent, ++pos);
+@@ -101,7 +101,7 @@ void Queue::PostIns(Entity *ent, iterator pos)
+ //
+ void Queue::PredIns(Entity *ent, iterator pos)
+ {
+-  Dprintf(("%s::PredIns(%s,pos:%p)", Name(), ent->Name(), *pos ));
++  Dprintf(("%s::PredIns(%s,pos:%p)", Name().c_str(), ent->Name().c_str(), *pos ));
+   List::PredIns(ent, *pos); // insert before pos, can be end()
+   ent->_MarkTime = Time;    // marks input time
+   StatN(size());            // length statistic
+@@ -112,7 +112,7 @@ void Queue::PredIns(Entity *ent, iterator pos)
+ //
+ Entity *Queue::GetFirst()
+ {
+-  Dprintf(("%s::GetFirst()", Name()));
++  Dprintf(("%s::GetFirst()", Name().c_str()));
+   Entity *ent = Get(begin());
+   return ent;
+ }
+@@ -122,7 +122,7 @@ Entity *Queue::GetFirst()
+ //
+ Entity *Queue::GetLast()
+ {
+-  Dprintf(("%s::GetLast()", Name()));
++  Dprintf(("%s::GetLast()", Name().c_str()));
+   Entity *ent = Get(--end());
+   return ent;
+ }
+@@ -132,7 +132,7 @@ Entity *Queue::GetLast()
+ //
+ Entity *Queue::Get(iterator pos)
+ {
+-  Dprintf(("%s::Get(pos:%p)", Name(), *pos));
++  Dprintf(("%s::Get(pos:%p)", Name().c_str(), *pos));
+   Entity *ent = static_cast<Entity*>(List::Get(*pos));
+   StatDT(Time - ent->_MarkTime);
+   StatN(size());  StatN.n--; // the number of samples correction
+@@ -144,7 +144,7 @@ Entity *Queue::Get(iterator pos)
+ //
+ void Queue::clear()
+ {
+-  Dprintf(("%s::Clear()", Name()));
++  Dprintf(("%s::Clear()", Name().c_str()));
+   StatN.Clear();
+   StatDT.Clear();
+   List::clear(); // problem with WARNING
+@@ -152,6 +152,7 @@ void Queue::clear()
+   StatDT.Clear();
+ }
+ 
++#if 0
+ ////////////////////////////////////////////////////////////////////////////
+ //  Process::Name --- name of the process
+ //
+@@ -161,6 +162,7 @@ const char *Queue::Name() const
+     if(*name) return name; // has explicit name
+     else      return SIMLIB_create_tmp_name("Queue{%p}", this);
+ }
++#endif
+ 
+ }
+ // end
+diff --git a/src/sampler.cc b/src/sampler.cc
+index c251560..1ab8169 100644
+--- a/src/sampler.cc
++++ b/src/sampler.cc
+@@ -30,7 +30,7 @@ namespace simlib3 {
+ 
+ SIMLIB_IMPLEMENTATION;
+ 
+-// inicializace
++// init
+ Sampler *Sampler::First = 0;
+ 
+ ////////////////////////////////////////////////////////////////////////////
+@@ -66,7 +66,7 @@ Sampler::~Sampler()
+   {
+     Sampler *i;
+     for(i=First; i && i->Next!=this; i=i->Next) { /*empty*/ }
+-    if (i) i->Next = Next;
++    if (i) i->Next = this->Next;
+   }
+   if( First==0 ) {
+      INSTALL_HOOK( SamplerInit, 0 );
+@@ -121,7 +121,7 @@ void Sampler::ActivateAll()
+ }
+ 
+ ////////////////////////////////////////////////////////////////////////////
+-// Start() -- start o fampling
++// Start() -- start of sampling
+ //
+ void Sampler::Start()
+ {
+@@ -142,7 +142,7 @@ void Sampler::Stop()
+ }
+ 
+ ////////////////////////////////////////////////////////////////////////////
+-//  Sample -- unconditionally
++//  Sample -- explicit sample
+ //
+ void Sampler::Sample()
+ {
+diff --git a/src/semaphor.cc b/src/semaphor.cc
+index 842385d..2d35556 100644
+--- a/src/semaphor.cc
++++ b/src/semaphor.cc
+@@ -50,14 +50,14 @@ Semaphore::Semaphore(const char *name)
+ Semaphore::~Semaphore()
+ {
+   Dprintf(("Semaphore::~Semaphore()  // \"%s\", %d ",
+-           Name(), n));
++           Name().c_str(), n));
+ }
+ 
+ ////////////////////////////////////////////////////////////////////////////
+ //  initialization of state
+ //
+ void Semaphore::Clear() {
+-  Dprintf(("%s.Clear()", Name()));
++  Dprintf(("%s.Clear()", Name().c_str()));
+   n = 1;
+   Q.Clear(); // queue initialization ###!!!
+ }
+@@ -67,7 +67,7 @@ void Semaphore::Clear() {
+ //  Output
+ //
+ void Semaphore::Output() const {
+-  Print("Semaphore: %s [%d]\n", Name(), n);
++  Print("Semaphore: %s [%d]\n", Name().c_str(), n);
+ }
+ 
+ 
+@@ -76,7 +76,7 @@ void Semaphore::Output() const {
+ //
+ void Semaphore::P()
+ {
+-  Dprintf(("Semaphore'%s'.P()", Name()));
++  Dprintf(("Semaphore'%s'.P()", Name().c_str()));
+ 
+   while(n == 0) {
+     Q.Insert(Current);  // Current==this
+@@ -91,7 +91,7 @@ void Semaphore::P()
+ //
+ void Semaphore::V()
+ {
+-  Dprintf(("%s.V()", Name()));
++  Dprintf(("%s.V()", Name().c_str()));
+   if(n>=1)
+     SIMLIB_error(SemaphoreError);
+   n++;
+diff --git a/src/simlib.h b/src/simlib.h
+index e87bc12..64d3d7c 100644
+--- a/src/simlib.h
++++ b/src/simlib.h
+@@ -47,6 +47,7 @@
+ // includes
+ #include <cstdlib>      // size_t
+ #include <list>         // std::list<>
++#include <string>       // std::string
+ 
+ // /////////////////////////////////////////////////////////////////////////
+ //! \namespace simlib3  Main SIMLIB (version 3+) namespace.
+@@ -207,7 +208,7 @@ void Stop();
+ void Abort();
+ 
+ //! print message and terminate program
+-void Error(const char *fmt, ...);
++[[noreturn]] void Error(const char *fmt, ...);
+ 
+ // TODO: convert to iostreams (SIMLIB4)
+ //! for Output methods, can be redirected
+@@ -293,9 +294,14 @@ double Weibul(double lambda, double alfa);
+ //! \ingroup simlib
+ class SimObject {
+  public:
+-  enum _Flags { _ALLOCATED_FLAG = 1, _EVAL_FLAG = 2 }; //!< internal flags
++  enum _Flags {         //!< internal flags
++        _CLEAR_ALL_FLAGS = 0,
++        _ALLOCATED_FLAG = 1,    // on heap
++        _EVAL_FLAG = 2,         // evaluated (aBlock)
++        _HAS_NAME_FLAG = 4      // named TODO
++  };
+  protected:
+-  const char * _name;   // optional name
++//  const char * _name;   // optional name FIXME: use dictionary for object naming
+   unsigned     _flags;  // various flags for internal use (TODO bitfield?)
+  public:
+   bool TestAndSetFlag(bool new_value, unsigned n);
+@@ -306,9 +312,9 @@ class SimObject {
+   void operator delete(void *ptr);     //!< deallocate object
+   bool isAllocated() const { return (_flags >> _ALLOCATED_FLAG)&1; }
+ 
+-  virtual const char *Name() const;    //!< get object name
+-  bool HasName() const { return _name !=0; }
+-  void SetName(const char *name);      //!< assign the name
++  virtual std::string Name() const;    //!< get object name
++  bool HasName() const { return (_flags & _HAS_NAME_FLAG) !=0; }
++  void SetName(const std::string &name);        //!< assign the name
+ 
+   // TODO: define friend operator <<
+   virtual void Output() const;         //!< print object to default output
+@@ -323,8 +329,6 @@ class SimObject {
+ //! <br> used for Queue implementation
+ //! \ingroup simlib
+ class Link : public SimObject {
+-  Link(Link&);                         // disable operation
+-  void operator= (Link&);              // disable operation
+   Link *pred;                          //!< previous object in List
+   Link *succ;                          //!< next object in List
+   List *head;                          //!< pointer to List (if any)
+@@ -364,8 +368,6 @@ struct EventNotice;     // we use only pointer to this class here
+ //! execution can be scheduled in calendar
+ //! \ingroup simlib
+ class Entity : public Link {
+-    Entity(const Entity&);           // disable
+-    Entity&operator=(const Entity&); // disable
+   protected:
+     static unsigned long _Number;   //!< current number of entities
+     unsigned long _Ident;           //!< unique identification number of entity
+@@ -386,6 +388,7 @@ class Entity : public Link {
+     ServicePriority_t _SPrio;           //!< priority of service in Facility
+     ////////////////////////////////////////////////////////////////////////////
+   public:
++    unsigned long id() const { return _Ident; }
+     typedef EntityPriority_t Priority_t;
+     //! priority of the entity (scheduling,queues)
+     Priority_t Priority;                //!< priority of the entity
+@@ -394,7 +397,7 @@ class Entity : public Link {
+ 
+     // common interface for Events and Processes
+     operator Entity* () { return this; } // default conversion
+-    virtual const char *Name() const;   //!< name of the entity
++//    virtual const char *Name() const;   //!< name of the entity
+     double ActivationTime();            // get activation time if scheduled
+ 
+     void Activate() { Activate(Time); } //!< activate now
+@@ -430,8 +433,6 @@ inline void Passivate(Entity *e) { e->Passivate(); }  //!< passivate entity e
+ //! during execution by e.g. Wait method call (it is coroutine)
+ //! \ingroup simlib
+ class Process : public Entity {
+-  Process(const Process&);              // disable copying
+-  Process&operator=(const Process&);    // disable copying
+   void * _context;                      //!< process context pointer
+   virtual void _Run() noexcept override;        // internal point of activation
+ 
+@@ -453,8 +454,8 @@ class Process : public Entity {
+   virtual ~Process();
+   virtual void Behavior() = 0;          //!< behavior description
+   virtual void Output() const override;          //!< print object to default output
+-  virtual const char *Name() const;     //!< name of object
+-  using  Entity::Activate;              // inherited: Activate()
++  virtual std::string Name() const override;     //!< name of object
++  using Entity::Activate;               // inherited: Activate()
+   virtual void Activate(double t) override;      //!< activate at time t (schedule)
+   virtual void Passivate() override;             //!< process deactivation (sleep)
+   virtual void Wait(double dtime);      //!< wait for dtime interval
+@@ -481,14 +482,16 @@ class Process : public Entity {
+ //! \ingroup simlib
+ class Event : public Entity {
+   virtual void _Run() noexcept override;
+-  virtual void Terminate();       // do not use (deprecated)
++  virtual void Terminate() override; // do not use (deprecated)
+  public:
+   Event(Priority_t p=DEFAULT_PRIORITY);
+   virtual ~Event();
+   virtual void Behavior() = 0;    //!< behavior description
+   virtual void Output() const override;          //!< print object to default output
+-  virtual const char *Name() const;     //!< name of object
+-  // public inherited: Activate(), Passivate(), Cancel()
++  virtual std::string Name() const override;     //!< name of object
++  // public inherited: Passivate(), Cancel()
++  virtual void Activate(double t) override;      //!< activate at time t (schedule)
++  using Entity::Activate;               // inherited: Activate()
+ };
+ 
+ ////////////////////////////////////////////////////////////////////////////
+@@ -496,8 +499,6 @@ class Event : public Entity {
+ //!  (typicaly used for output of continuous model)
+ //! \ingroup simlib
+ class Sampler: public Event {
+-    Sampler(const Sampler&);            //## disable
+-    Sampler&operator=(const Sampler&);  //## disable
+     static Sampler *First;              // list of objects TODO: use container
+     Sampler *Next;                      // next object
+   protected:
+@@ -505,7 +506,7 @@ class Sampler: public Event {
+     double last;        //!< last sample time -- prevents sample duplication
+     double step;        //!< step of sampling
+     bool on;            //!< switch on/off
+-    virtual void Behavior(); //!< behavior description
++    virtual void Behavior() override; //!< behavior description
+   public:
+     Sampler(void (*pf)(), double dt=0.0);
+     virtual ~Sampler();
+@@ -622,8 +623,6 @@ class TStat : public SimObject {
+ //
+ //! \ingroup simlib
+ class List : public Link { // circular list of Link items
+-    List(const List&) = delete;                 // disable copying
+-    void operator= (const List&) = delete;      // disable
+     static Link *next(Link*p)           { return p->succ; }
+     static Link *previous(Link*p)       { return p->pred; }
+     unsigned n;                          // number of objects in list
+@@ -689,7 +688,7 @@ class Queue : public List { // don't inherit interface for now
+     Queue();
+     explicit Queue(const char *_name);
+     ~Queue();                           // list destructor clears content
+-    virtual const char *Name() const;
++    //virtual const char *Name() const;
+     virtual void Output() const override;         //!< print statistics
+     operator Queue* () { return this; }  // allows Queue instead Queue*
+     iterator begin()   { return List::begin(); }
+@@ -718,8 +717,6 @@ class Queue : public List { // don't inherit interface for now
+ //! statistics
+ //! \ingroup simlib
+ class Histogram : public SimObject {
+-    Histogram(const Histogram&);           // disable
+-    Histogram&operator=(const Histogram&); // disable
+  protected:
+   unsigned *dptr;            // value array
+   double   low;              // low bound
+@@ -821,8 +818,6 @@ class Store : public SimObject {
+ //! \ingroup simlib
+ /// blocks have not copy semantics (TODO: add move semantics)
+ class aBlock : public SimObject {               // base class
+-    aBlock(const aBlock&) = delete;             // disable copying
+-    aBlock &operator=(const aBlock&) = delete;  // disable assignment
+   public:
+     aBlock() {}
+ };
+@@ -832,8 +827,6 @@ class aBlock : public SimObject {               // base class
+ //! suitable for expression-tree building and evaluation
+ //! \ingroup simlib
+ class aContiBlock : public aBlock {
+-    aContiBlock(const aContiBlock&);            // disable copy ctr
+-    void operator= (const aContiBlock&);        // disable assignment
+     //! evaluate without loop detection
+     virtual void Eval() {};
+   protected:
+@@ -898,7 +891,7 @@ class Parameter : public aContiBlock {
+ //! \ingroup simlib
+ class Input {
+   aContiBlock *bp;
+-  Input(); // disable default constructor
++  Input() = delete; // disable default constructor
+  public:
+   //! transparent copy of block reference
+   Input(const Input &i): bp(i.bp) { RegisterReference(bp); }
+@@ -1060,8 +1053,8 @@ public:
+ //TODO: reduce to simple public interface,
+ //      delegate implementation to internal (hidden) class
+ class IntegrationMethod {
+-    IntegrationMethod(const IntegrationMethod&); // ## disable
+-    IntegrationMethod&operator=(const IntegrationMethod&); // ## disable
++    IntegrationMethod(const IntegrationMethod&) = delete;
++    IntegrationMethod&operator=(const IntegrationMethod&) = delete;
+ private:
+   static IntegrationMethod* CurrentMethodPtr;  // method used at present
+   static std::list<IntegrationMethod*>* MthLstPtr; // list of registrated methods
+@@ -1094,8 +1087,8 @@ protected:
+   /* memory of auxiliary values */
+ 
+   class Memory {
+-      Memory(const Memory&) = delete;           // ## disable
+-      Memory&operator=(const Memory&) = delete; // ## disable
++      Memory(const Memory&) = delete;
++      Memory&operator=(const Memory&) = delete;
+     private:
+       static const size_t page_size;  // size of memory page
+       double *arr;  // array
+@@ -1168,8 +1161,6 @@ public:
+ ////////////////////////////////////////////////////////////////////////////
+ //! base for multi-step integration method
+ class MultiStepMethod : public IntegrationMethod {
+-    MultiStepMethod(const MultiStepMethod&); // ## disable
+-    MultiStepMethod&operator=(const MultiStepMethod&); // ## disable
+ private:
+   char* SlaveName;  // the name of the method used for starting
+   SingleStepMethod* Slave_Ptr;  // pointer to the method used for starting
+@@ -1300,7 +1291,6 @@ inline const char* GetStarter(void)
+ //! input is derivative, output is state
+ //! \ingroup simlib
+ class Integrator : public aContiBlock {   // integrator
+- private:
+   Integrator &operator= (const Integrator &x) = delete; // disable assignment
+   double dd;                           // input value: y'=f(t,y)
+   double ddl;                          // the same from previous step
+@@ -1327,7 +1317,7 @@ class Integrator : public aContiBlock {   // integrator
+   void Eval() override;                         // integrator input evaluation
+   double Value() override;                      //!< the state of integrator
+   double InputValue() { return input.Value(); } //!< current input value
+-  virtual const char *Name() const;
++  //virtual const char *Name() const;
+ 
+   // private interface
+   void Save(void) { ddl=dd; ssl=ss; }     // save status
+@@ -1348,8 +1338,6 @@ class Integrator : public aContiBlock {   // integrator
+ //! base for blocks with internal state (Relay, ...)
+ //! \ingroup simlib
+ class Status : public aContiBlock1 {   // state-variables
+-  Status(const Status&) = delete;                     // disable copy ctor
+-  void operator= (const Status&) = delete;            // disable assignment
+  protected:
+   double initval;                      //!< initial value
+   bool ValueOK;                        // valid-flag ###
+@@ -1365,7 +1353,7 @@ class Status : public aContiBlock1 {   // state-variables
+   void Set(double value);              // set status of block
+   virtual void Eval() override;                 // block evaluation
+   virtual double Value() override;              // block status
+-  virtual const char *Name() const;
++  //virtual const char *Name() const;
+   // internal interface
+   void Save() { stl = st; }            // save status
+   void Restore();                      // restore saved status
+@@ -1391,7 +1379,7 @@ class Hyst : public Status {
+     virtual void Eval() override;           // block evaluation
+   public:
+     Hyst(Input i, double p1, double p2, double y1, double y2, double tga);
+-    virtual const char *Name() const;
++    //virtual const char *Name() const;
+ };
+ 
+ typedef Hyst Hysteresis; // alias name
+@@ -1407,7 +1395,7 @@ class Blash : public Status {    // backlash
+  public:
+   Blash(Input i, double p1, double p2, double tga);
+   virtual void Eval() override;           // block evaluation
+-  virtual const char *Name() const;
++  //virtual const char *Name() const;
+ };
+ 
+ typedef Blash Backlash; // alias
+@@ -1424,7 +1412,7 @@ class Relay : public Status {   // general relay block
+   Relay(Input i, double p1, double p2, double p3, double p4,
+                  double y1, double y2);
+   virtual void Eval() override;          //!< block evaluation
+-  virtual const char *Name() const;
++  //virtual const char *Name() const;
+ };
+ 
+ 
+@@ -1472,7 +1460,7 @@ class Function1 : public aContiBlock1 {
+  public:
+   Function1(Input i, double (*pf)(double));
+   virtual double Value() override;
+-  virtual const char *Name() const;
++  //virtual const char *Name() const;
+ };
+ 
+ ////////////////////////////////////////////////////////////////////////////
+@@ -1486,7 +1474,7 @@ class Function2 : public aContiBlock2 {
+  public:
+   Function2(Input i1, Input i2, double (*pf)(double,double));
+   virtual double Value() override;
+-  virtual const char *Name() const;
++  //virtual const char *Name() const;
+ };
+ 
+ 
+@@ -1538,7 +1526,7 @@ class Condition : public aCondition {  // state condition
+   virtual bool Value() override { return cc; }   // status
+   Input SetInput(Input inp) { return in.Set(inp); } // change input block
+   virtual void Action()=0;             // state event
+-  virtual const char *Name() const;
++  //virtual const char *Name() const;
+ };
+ 
+ ////////////////////////////////////////////////////////////////////////////
+@@ -1549,7 +1537,7 @@ class ConditionUp : public Condition { // state event on FALSE-->TRUE change
+   explicit ConditionUp(Input i) : Condition(i) {}
+   bool Test() override { return Condition::Test() && Up(); }
+   virtual void Action()=0;             // state event
+-  virtual const char *Name() const;
++  //virtual const char *Name() const;
+ };
+ 
+ ////////////////////////////////////////////////////////////////////////////
+@@ -1560,7 +1548,7 @@ class ConditionDown : public Condition { // state event on TRUE-->FALSE change
+   explicit ConditionDown(Input i) : Condition(i) {}
+   bool Test() override { return Condition::Test() && Down(); }
+   virtual void Action()=0;                // state event
+-  virtual const char *Name() const;
++  //virtual const char *Name() const;
+ };
+ 
+ 
+@@ -1582,7 +1570,7 @@ class Lim : public aContiBlock1 {
+   Lim(Input in, double l, double h, double tga=1.0);
+   virtual void _Eval() override;           // evaluation with loop check
+   virtual double Value() override;         // returned value
+-  virtual const char *Name() const;
++  //virtual const char *Name() const;
+ };
+ 
+ typedef Lim Limitation;
+@@ -1599,7 +1587,7 @@ class Insv : public aContiBlock1 {
+   Insv(Input in, double l, double h, double tga=1.0, double tgb=1.0);
+   virtual void _Eval() override;           // evaluation with loop check
+   virtual double Value() override;         // returned value
+-  virtual const char *Name() const;
++  //virtual const char *Name() const;
+ };
+ 
+ typedef Insv DeadZone;
+@@ -1615,7 +1603,7 @@ class Qntzr : public aContiBlock1 {
+   Qntzr(Input in, double qstep=1.0);
+   virtual void _Eval() override;           // evaluation with loop check
+   virtual double Value() override;         // returned value
+-  virtual const char *Name() const;
++  //virtual const char *Name() const;
+ };
+ 
+ typedef Qntzr Quantizer;
+@@ -1632,7 +1620,7 @@ class Frict : public aContiBlock1 {
+   Frict(Input in, double l, double h, double tga=1.0);
+   virtual void _Eval() override;           // evaluation with loop check
+   virtual double Value() override;         // returned value
+-  virtual const char *Name() const;
++  //virtual const char *Name() const;
+ };
+ 
+ typedef Frict Friction;
+@@ -1653,7 +1641,7 @@ class Rline : public aContiBlock1 {
+   ~Rline();
+   virtual void _Eval() override;           // evaluation with loop check
+   virtual double Value() override;         // returned value
+-  virtual const char *Name() const;
++  //virtual const char *Name() const;
+ };
+ 
+ ////////////////////////////////////////////////////////////////////////////
+@@ -1682,7 +1670,7 @@ class AlgLoop : public aContiBlock1 {
+   void Set(double eps, unsigned long max_it, // set parameters
+            double t_min, double t_max);
+   virtual double Value()=0; // returned value
+-  virtual const char *Name() const;
++  //virtual const char *Name() const;
+ }; // AlgLoop
+ 
+ 
+@@ -1756,12 +1744,12 @@ class Newton : public AlgLoop {
+ // this is system dictionary:   relation: objectptr---textname
+ // ### TODO: use strings in objects OR unordered_map
+ //
+-void SetName(SimObject &o, const char *name);
+-void SetName(SimObject *o, const char *name);
++void SetName(SimObject &o, const std::string &name);
++void SetName(SimObject *o, const std::string &name);
+ void RemoveName(SimObject &o);
+ void RemoveName(SimObject *o);
+-const char *GetName(SimObject &o);
+-const char *GetName(SimObject *o);
++std::string GetName(SimObject &o);
++std::string GetName(SimObject *o);
+ 
+ 
+ ////////////////////////////////////////////////////////////////////////////
+diff --git a/src/stat.cc b/src/stat.cc
+index d857e48..6b6dbdf 100644
+--- a/src/stat.cc
++++ b/src/stat.cc
+@@ -68,7 +68,7 @@ Stat::Stat() :
+ //
+ Stat::~Stat()
+ {
+-  Dprintf(("Stat::~Stat() // \"%s\" ", Name()));
++  Dprintf(("Stat::~Stat() // \"%s\" ", Name().c_str()));
+ }
+ 
+ ////////////////////////////////////////////////////////////////////////////
+diff --git a/src/stdblock.cc b/src/stdblock.cc
+index bd7f78b..7198fa4 100644
+--- a/src/stdblock.cc
++++ b/src/stdblock.cc
+@@ -68,6 +68,7 @@ double Lim::Value()
+ }
+ 
+ 
++#if 0
+ const char *Lim::Name() const
+ {
+     if (HasName())
+@@ -75,6 +76,7 @@ const char *Lim::Name() const
+     else
+         return SIMLIB_create_tmp_name("Lim{%p}", this);
+ }
++#endif
+ 
+ ////////////////////////////////////////////////////////////////////////////
+ /// dead space
+@@ -101,6 +103,7 @@ double Insv::Value()
+     return (0);
+ }
+ 
++#if 0
+ const char *Insv::Name() const
+ {
+     if (HasName())
+@@ -108,6 +111,7 @@ const char *Insv::Name() const
+     else
+         return SIMLIB_create_tmp_name("Insv{%p}", this);
+ }
++#endif
+ 
+ ////////////////////////////////////////////////////////////////////////////
+ /// quantizer constructor
+@@ -132,6 +136,7 @@ double Qntzr::Value()
+     return (k * step);
+ }
+ 
++#if 0
+ const char *Qntzr::Name() const
+ {
+     if (HasName())
+@@ -139,6 +144,7 @@ const char *Qntzr::Name() const
+     else
+         return SIMLIB_create_tmp_name("Qntzr{%p}", this);
+ }
++#endif
+ 
+ ////////////////////////////////////////////////////////////////////////////
+ /// friction constructor
+@@ -165,6 +171,7 @@ double Frict::Value()
+     return (0);
+ }
+ 
++#if 0
+ const char *Frict::Name() const
+ {
+     if (HasName())
+@@ -172,6 +179,7 @@ const char *Frict::Name() const
+     else
+         return SIMLIB_create_tmp_name("Frict{%p}", this);
+ }
++#endif
+ 
+ ////////////////////////////////////////////////////////////////////////////
+ /// hysteresis constructor
+@@ -198,7 +206,7 @@ void Hyst::Eval()
+     ValueOK = true;
+ }
+ 
+-
++#if 0
+ const char *Hyst::Name() const
+ {
+     if (HasName())
+@@ -206,6 +214,7 @@ const char *Hyst::Name() const
+     else
+         return SIMLIB_create_tmp_name("Hyst{%p}", this);
+ }
++#endif
+ 
+ ////////////////////////////////////////////////////////////////////////////
+ /// relay constructor
+@@ -238,6 +247,7 @@ void Relay::Eval()
+     ValueOK = true;
+ }
+ 
++#if 0
+ const char *Relay::Name() const
+ {
+     if (HasName())
+@@ -245,6 +255,7 @@ const char *Relay::Name() const
+     else
+         return SIMLIB_create_tmp_name("Relay{%p}", this);
+ }
++#endif
+ 
+ ////////////////////////////////////////////////////////////////////////////
+ /// blash constructor
+@@ -267,6 +278,7 @@ void Blash::Eval()
+     ValueOK = true;
+ }
+ 
++#if 0
+ const char *Blash::Name() const
+ {
+     if (HasName())
+@@ -274,6 +286,7 @@ const char *Blash::Name() const
+     else
+         return SIMLIB_create_tmp_name("Blash{%p}", this);
+ }
++#endif
+ 
+ ////////////////////////////////////////////////////////////////////////////
+ /// constructor of class Rline
+@@ -333,6 +346,7 @@ double Rline::Value()
+         * (x - tableX[i - 1]) + tableY[i - 1];
+ }
+ 
++#if 0
+ const char *Rline::Name() const
+ {
+     if (HasName())
+@@ -340,5 +354,6 @@ const char *Rline::Name() const
+     else
+         return SIMLIB_create_tmp_name("Rline{%p}", this);
+ }
++#endif
+ 
+ } // namespace
+diff --git a/src/store.cc b/src/store.cc
+index eef78b9..44ee551 100644
+--- a/src/store.cc
++++ b/src/store.cc
+@@ -70,7 +70,7 @@ Store::Store(unsigned long _capacity, Queue *queue) :
+   Q(queue)
+ {
+   CHECKQUEUE(queue);
+-  Dprintf(("Store::Store(%lu,%s)",_capacity,queue->Name()));
++  Dprintf(("Store::Store(%lu,%s)",_capacity,queue->Name().c_str()));
+ }
+ 
+ Store::Store(const char *name, unsigned long _capacity, Queue *queue) :
+@@ -81,7 +81,7 @@ Store::Store(const char *name, unsigned long _capacity, Queue *queue) :
+ {
+   CHECKQUEUE(queue);
+   Dprintf(("Store::Store(\"%s\",%lu, Queue\"%s\")",
+-            name, _capacity, queue->Name()));
++            name, _capacity, queue->Name().c_str()));
+   ::SetName(this, name);
+ }
+ 
+@@ -91,8 +91,8 @@ Store::Store(const char *name, unsigned long _capacity, Queue *queue) :
+ //
+ Store::~Store()
+ {
+-  Dprintf(("Store::~Store() // \"%s\" ",Name()));
+-  //Clear();
++  Dprintf(("Store::~Store() // \"%s\" ",Name().c_str()));
++  Clear();
+   if (OwnQueue()) delete Q;
+ }
+ 
+@@ -128,7 +128,7 @@ void Store::SetQueue(Queue *queue)
+ void Store::Enter(Entity *e, unsigned long rcap)
+ {
+ // TODO: remove parameter e, use Current
+-  Dprintf(("%s.Enter(%s,%lu)",Name(),e->Name(),rcap));
++  Dprintf(("%s.Enter(%s,%lu)",Name().c_str(),e->Name().c_str(),rcap));
+ 
+   if (e != Current)
+     SIMLIB_error(EntityRefError); // current process only
+@@ -151,7 +151,7 @@ void Store::Enter(Entity *e, unsigned long rcap)
+ /// - free requested capacity
+ void Store::Leave(unsigned long rcap)
+ {
+-  Dprintf(("%s.Leave(%lu)", Name(), rcap));
++  Dprintf(("%s.Leave(%lu)", Name().c_str(), rcap));
+   if (used<rcap)
+     SIMLIB_error(LeaveManyError);
+   used -= rcap ;           // free capacity
+@@ -167,7 +167,7 @@ void Store::Leave(unsigned long rcap)
+           continue; // skip if request can't be satisfied
+       p->Out();                      // remove from queue
+       Dprintf(("%s.Enter(%s,%lu) from queue",
+-                Name(), p->Name(), p->_RequiredCapacity));
++                Name().c_str(), p->Name().c_str(), p->_RequiredCapacity));
+       used += p->_RequiredCapacity;  // allocate capacity
+       tstat(used);                   // update statistics
+       p->Activate();                 // reactivate now
+@@ -180,7 +180,7 @@ void Store::Leave(unsigned long rcap)
+ /// - insert entity into priority queue
+ void Store::QueueIn(Entity *e, unsigned long c)
+ {
+-  Dprintf(("%s --> input queue of %s ",e->Name(),Name()));
++  Dprintf(("%s --> input queue of %s ",e->Name().c_str(),Name().c_str()));
+   e->_RequiredCapacity = c;     // mark requested capacity
+   Q->Insert(e);                 // insert
+ }
+@@ -190,7 +190,7 @@ void Store::QueueIn(Entity *e, unsigned long c)
+ /// - store (re-)initialization, including internal queue
+ void Store::Clear()
+ {
+-  Dprintf(("%s.Clear()", Name()));
++  Dprintf(("%s.Clear()", Name().c_str()));
+   used = 0;                     // empty store
+   // FIXME: clear unconditionally? (what to do for shared queue?)
+   if (OwnQueue()) Q->Clear();   // clear input queue if owned
+diff --git a/src/tstat.cc b/src/tstat.cc
+index acee643..285c1b6 100644
+--- a/src/tstat.cc
++++ b/src/tstat.cc
+@@ -55,7 +55,7 @@ TStat::TStat(const char *name, double initval) :
+ //
+ TStat::~TStat()
+ {
+-  Dprintf(("TStat::~TStat() // \"%s\" ", Name()));
++  Dprintf(("TStat::~TStat() // \"%s\" ", Name().c_str()));
+ }
+ 
+ ////////////////////////////////////////////////////////////////////////////
+@@ -82,7 +82,7 @@ void TStat::operator () (double x)
+ //
+ void TStat::Clear(double initval)
+ {
+-  Dprintf(("TStat::Clear() // \"%s\" ", Name()));
++  Dprintf(("TStat::Clear() // \"%s\" ", Name().c_str()));
+   sxt = sx2t = 0;
+   min = max = initval;
+   t0 = tl = Time;
+diff --git a/src/waitunti.cc b/src/waitunti.cc
+index a9e4bef..606f61e 100644
+--- a/src/waitunti.cc
++++ b/src/waitunti.cc
+@@ -46,7 +46,7 @@ class WaitUntilList {
+     static void GetCurrent();        // get current process
+     static void WU_hook(); // active: next process in WUlist or 0
+     static void Remove(Process *p) { // find and remove p
+-        Dprintf(("WaitUntil::Remove(%s)", p->Name()));
++        Dprintf(("WaitUntil::Remove(Process#%ld)", p->id()));
+         instance->l.remove(p); // should be in list
+     }
+     static void clear();    // empty
+@@ -77,7 +77,7 @@ class WaitUntilList {
+        if(WaitUntilList::instance == 0) { _Print("none\n"); return; }
+        WaitUntilList::iterator i = WaitUntilList::begin();
+        for( int n=0 ; i!=WaitUntilList::end() ; ++i, ++n )
+-         _Print(" [%d] %s\n", n, (*i)->Name() );
++         _Print(" [%d] Process#%ld\n", n, (*i)->id() );
+     }
+ #endif
+ 
+@@ -122,7 +122,7 @@ void WaitUntilList::WU_hook() { // get ptr to next process in WUlist or 0
+ //
+ bool Process::_WaitUntil(bool test)
+ {
+-  Dprintf(("%s._WaitUntil(%s)", Name(), test?"true":"false" ));
++  Dprintf(("Process#%ld._WaitUntil(%s)", id(), test?"true":"false" ));
+   if(test) {                    // true --- end of wait
+     WaitUntilList::GetCurrent(); // ***** remove from WUList
+     _wait_until = false;        // not in WUlist
+@@ -155,7 +155,7 @@ void WaitUntilList::InsertCurrent()
+     if(flag) return; // is in WUlist
+     //CONDITION: current process is not in WUlist
+     Process *e = static_cast<Process*>(SIMLIB_Current); // TODO: dynamic_cast ?
+-    Dprintf(("WaitUntilList.Insert(%s)", e->Name()));
++    Dprintf(("WaitUntilList.Insert(Process#%ld)", e->id()));
+     if(instance==0)
+         create(); // create singleton instance
+     if(empty())   // it was empty (FIXME: why not at creation time?)
+@@ -177,7 +177,7 @@ void WaitUntilList::GetCurrent()
+   if(!flag) return; // process is not in WUlist
+   //PRECONDITION: WUlist is initialized, not empty
+   Process *p = *current;
+-  Dprintf(("WaitUntilList.Get(); // \"%s\" ", p->Name()));
++  Dprintf(("WaitUntilList.Get(); // \"Process#%ld\" ", p->id()));
+   instance->l.erase(current); // remove item pointed by iterator (fast)
+   if(empty())
+     INSTALL_HOOK(WUget_next, 0); // uninstall hook if last item removed
+diff --git a/tests/barrier-test1.cc b/tests/barrier-test1.cc
+index a141e98..59799ff 100644
+--- a/tests/barrier-test1.cc
++++ b/tests/barrier-test1.cc
+@@ -5,9 +5,9 @@ Barrier b("b", 5);
+ 
+ class BarrierTest1 : public Process {
+     void Behavior(void) {
+-        Print("b:start %p\n", this);
++        Print("b:start %s\n", Name().c_str());
+         b.Wait(); // wait on barrier
+-        Print("b:end %p\n", this);
++        Print("b:end %s\n", Name().c_str());
+     }
+ };
+ 
+diff --git a/tests/barrier-test2.cc b/tests/barrier-test2.cc
+index 0510e75..09c2aa3 100644
+--- a/tests/barrier-test2.cc
++++ b/tests/barrier-test2.cc
+@@ -14,7 +14,7 @@ class Customer: public Process {
+     void Behavior() {           // --- example behavior ---
+         Prichod = Time;
+         B.Enter(this);          // create group of customers
+-        Print("Time %g --- %s\n", Time, Name());
++        Print("Time %g --- %s\n", Time, Name().c_str());
+         Wait(10);               // service time
+         Table(Time - Prichod);  // total time spent in system
+     }
+diff --git a/tests/reference-outputs/barrier-test1.out b/tests/reference-outputs/barrier-test1.out
+index 8ea759c..f3b4b10 100644
+--- a/tests/reference-outputs/barrier-test1.out
++++ b/tests/reference-outputs/barrier-test1.out
+@@ -1,18 +1,18 @@
+-b:start 0xd69010
+-b:start 0xd690b0
+-b:start 0xd69150
+-b:start 0xd691f0
+-b:start 0xd69290
+-b:start 0xd69330
+-b:start 0xd693d0
+-b:end 0xd69010
+-b:end 0xd690b0
+-b:end 0xd69150
+-b:end 0xd691f0
+-b:end 0xd69290
++b:start Process#0
++b:start Process#1
++b:start Process#2
++b:start Process#3
++b:start Process#4
++b:start Process#5
++b:start Process#6
++b:end Process#0
++b:end Process#1
++b:end Process#2
++b:end Process#3
++b:end Process#4
+ Barrier: b
+-  0: [0xd69330] Process#5
+-  1: [0xd693d0] Process#6
++  0: [0x55fac6511230] Process#5
++  1: [0x55fac65112d0] Process#6
+   2: empty
+   3: empty
+   4: empty
+diff --git a/tests/reference-outputs/sizeof-all-32.out b/tests/reference-outputs/sizeof-all-32.out
+index 3fcd554..39d11af 100644
+--- a/tests/reference-outputs/sizeof-all-32.out
++++ b/tests/reference-outputs/sizeof-all-32.out
+@@ -1,7 +1,7 @@
+ Simlib internals
+ ----------------
+ 
+-SIMLIB Version  = SIMLIB 3.03 (Nov 26 2013 14:50:40)
++SIMLIB Version  = SIMLIB 3.08 (Sep 23 2021 15:17:25)
+ SIMLIB System   = Linux
+ SIMLIB Compiler = GNU C++
+ SIMLIB MinTime = 0
+@@ -13,53 +13,53 @@ SIMLIB default RelativeError = 0.001
+ SIMLIB priority = -127 .. 127, (default = 0)
+ 
+   sizeof(void*) = 4
+-  sizeof(SimObject) = 12
+-  sizeof(Link) = 24,  parent = SimObject
+-  sizeof(Entity) = 52,  parent = Link
+-  sizeof(Process) = 64,  parent = Entity
+-  sizeof(Event) = 52,  parent = Entity
+-  sizeof(Sampler) = 80,  parent = Event
+-  sizeof(Stat) = 48,  parent = SimObject
+-  sizeof(TStat) = 72,  parent = SimObject
+-  sizeof(List) = 28,  parent = SimObject
+-  sizeof(Queue) = 148,  parent = List
+-  sizeof(Histogram) = 84,  parent = SimObject
+-  sizeof(Facility) = 100,  parent = SimObject
+-  sizeof(Store) = 100,  parent = SimObject
+-  sizeof(aBlock) = 12,  parent = SimObject
+-  sizeof(aContiBlock) = 16,  parent = aBlock
+-  sizeof(Constant) = 24,  parent = aContiBlock
+-  sizeof(Variable) = 24,  parent = aContiBlock
+-  sizeof(Parameter) = 24,  parent = aContiBlock
++  sizeof(SimObject) = 8
++  sizeof(Link) = 20,  parent = SimObject
++  sizeof(Entity) = 48,  parent = Link
++  sizeof(Process) = 60,  parent = Entity
++  sizeof(Event) = 48,  parent = Entity
++  sizeof(Sampler) = 76,  parent = Event
++  sizeof(Stat) = 44,  parent = SimObject
++  sizeof(TStat) = 68,  parent = SimObject
++  sizeof(List) = 24,  parent = SimObject
++  sizeof(Queue) = 136,  parent = List
++  sizeof(Histogram) = 76,  parent = SimObject
++  sizeof(Facility) = 92,  parent = SimObject
++  sizeof(Store) = 92,  parent = SimObject
++  sizeof(aBlock) = 8,  parent = SimObject
++  sizeof(aContiBlock) = 12,  parent = aBlock
++  sizeof(Constant) = 20,  parent = aContiBlock
++  sizeof(Variable) = 20,  parent = aContiBlock
++  sizeof(Parameter) = 20,  parent = aContiBlock
+   sizeof(Input) = 4
+-  sizeof(aContiBlock1) = 20,  parent = aContiBlock
+-  sizeof(Expression) = 20,  parent = aContiBlock1
+-  sizeof(aContiBlock2) = 24,  parent = aContiBlock
+-  sizeof(aContiBlock3) = 28,  parent = aContiBlock
+-  sizeof(IntegrationMethod) = 24
+-  sizeof(SingleStepMethod) = 28,  parent = IntegrationMethod
+-  sizeof(MultiStepMethod) = 32,  parent = IntegrationMethod
+-  sizeof(StatusMethod) = 40,  parent = SingleStepMethod
+-  sizeof(Integrator) = 64,  parent = aContiBlock
+-  sizeof(Status) = 52,  parent = aContiBlock1
+-  sizeof(Hyst) = 92,  parent = Status
+-  sizeof(Blash) = 76,  parent = Status
+-  sizeof(Relay) = 100,  parent = Status
+-  sizeof(Function1) = 24,  parent = aContiBlock1
+-  sizeof(Function2) = 28,  parent = aContiBlock2
+-  sizeof(aCondition) = 16,  parent = aBlock
+-  sizeof(Condition) = 24,  parent = aCondition
+-  sizeof(ConditionUp) = 24,  parent = Condition
+-  sizeof(ConditionDown) = 24,  parent = Condition
+-  sizeof(Lim) = 44,  parent = aContiBlock1
+-  sizeof(Insv) = 52,  parent = aContiBlock1
+-  sizeof(Qntzr) = 28,  parent = aContiBlock1
+-  sizeof(Frict) = 44,  parent = aContiBlock1
+-  sizeof(Rline) = 32,  parent = aContiBlock1
+-  sizeof(AlgLoop) = 72,  parent = aContiBlock1
+-  sizeof(Iterations) = 72,  parent = AlgLoop
+-  sizeof(Bisect) = 72,  parent = AlgLoop
+-  sizeof(RegulaFalsi) = 80,  parent = AlgLoop
+-  sizeof(Newton) = 88,  parent = AlgLoop
+-  sizeof(Semaphore) = 164,  parent = SimObject
+-  sizeof(Barrier) = 24,  parent = SimObject
++  sizeof(aContiBlock1) = 16,  parent = aContiBlock
++  sizeof(Expression) = 16,  parent = aContiBlock1
++  sizeof(aContiBlock2) = 20,  parent = aContiBlock
++  sizeof(aContiBlock3) = 24,  parent = aContiBlock
++  sizeof(IntegrationMethod) = 28
++  sizeof(SingleStepMethod) = 32,  parent = IntegrationMethod
++  sizeof(MultiStepMethod) = 36,  parent = IntegrationMethod
++  sizeof(StatusMethod) = 48,  parent = SingleStepMethod
++  sizeof(Integrator) = 60,  parent = aContiBlock
++  sizeof(Status) = 48,  parent = aContiBlock1
++  sizeof(Hyst) = 88,  parent = Status
++  sizeof(Blash) = 72,  parent = Status
++  sizeof(Relay) = 96,  parent = Status
++  sizeof(Function1) = 20,  parent = aContiBlock1
++  sizeof(Function2) = 24,  parent = aContiBlock2
++  sizeof(aCondition) = 12,  parent = aBlock
++  sizeof(Condition) = 20,  parent = aCondition
++  sizeof(ConditionUp) = 20,  parent = Condition
++  sizeof(ConditionDown) = 20,  parent = Condition
++  sizeof(Lim) = 40,  parent = aContiBlock1
++  sizeof(Insv) = 48,  parent = aContiBlock1
++  sizeof(Qntzr) = 24,  parent = aContiBlock1
++  sizeof(Frict) = 40,  parent = aContiBlock1
++  sizeof(Rline) = 28,  parent = aContiBlock1
++  sizeof(AlgLoop) = 68,  parent = aContiBlock1
++  sizeof(Iterations) = 68,  parent = AlgLoop
++  sizeof(Bisect) = 68,  parent = AlgLoop
++  sizeof(RegulaFalsi) = 76,  parent = AlgLoop
++  sizeof(Newton) = 84,  parent = AlgLoop
++  sizeof(Semaphore) = 148,  parent = SimObject
++  sizeof(Barrier) = 20,  parent = SimObject
+diff --git a/tests/reference-outputs/sizeof-all-64.out b/tests/reference-outputs/sizeof-all-64.out
+index f6daa19..a43b197 100644
+--- a/tests/reference-outputs/sizeof-all-64.out
++++ b/tests/reference-outputs/sizeof-all-64.out
+@@ -1,7 +1,7 @@
+ Simlib internals
+ ----------------
+ 
+-SIMLIB Version  = SIMLIB 3.03 (Nov 26 2013 15:05:31)
++SIMLIB Version  = SIMLIB 3.08 (Sep 23 2021 15:05:23)
+ SIMLIB System   = Linux
+ SIMLIB Compiler = GNU C++
+ SIMLIB MinTime = 0
+@@ -13,53 +13,53 @@ SIMLIB default RelativeError = 0.001
+ SIMLIB priority = -127 .. 127, (default = 0)
+ 
+   sizeof(void*) = 8
+-  sizeof(SimObject) = 24
+-  sizeof(Link) = 48,  parent = SimObject
+-  sizeof(Entity) = 88,  parent = Link
+-  sizeof(Process) = 104,  parent = Entity
+-  sizeof(Event) = 88,  parent = Entity
+-  sizeof(Sampler) = 128,  parent = Event
+-  sizeof(Stat) = 64,  parent = SimObject
+-  sizeof(TStat) = 88,  parent = SimObject
+-  sizeof(List) = 56,  parent = SimObject
+-  sizeof(Queue) = 208,  parent = List
+-  sizeof(Histogram) = 120,  parent = SimObject
+-  sizeof(Facility) = 136,  parent = SimObject
+-  sizeof(Store) = 136,  parent = SimObject
+-  sizeof(aBlock) = 24,  parent = SimObject
+-  sizeof(aContiBlock) = 24,  parent = aBlock
+-  sizeof(Constant) = 32,  parent = aContiBlock
+-  sizeof(Variable) = 32,  parent = aContiBlock
+-  sizeof(Parameter) = 32,  parent = aContiBlock
++  sizeof(SimObject) = 16
++  sizeof(Link) = 40,  parent = SimObject
++  sizeof(Entity) = 80,  parent = Link
++  sizeof(Process) = 96,  parent = Entity
++  sizeof(Event) = 80,  parent = Entity
++  sizeof(Sampler) = 120,  parent = Event
++  sizeof(Stat) = 56,  parent = SimObject
++  sizeof(TStat) = 80,  parent = SimObject
++  sizeof(List) = 48,  parent = SimObject
++  sizeof(Queue) = 184,  parent = List
++  sizeof(Histogram) = 104,  parent = SimObject
++  sizeof(Facility) = 120,  parent = SimObject
++  sizeof(Store) = 120,  parent = SimObject
++  sizeof(aBlock) = 16,  parent = SimObject
++  sizeof(aContiBlock) = 16,  parent = aBlock
++  sizeof(Constant) = 24,  parent = aContiBlock
++  sizeof(Variable) = 24,  parent = aContiBlock
++  sizeof(Parameter) = 24,  parent = aContiBlock
+   sizeof(Input) = 8
+-  sizeof(aContiBlock1) = 32,  parent = aContiBlock
+-  sizeof(Expression) = 32,  parent = aContiBlock1
+-  sizeof(aContiBlock2) = 40,  parent = aContiBlock
+-  sizeof(aContiBlock3) = 48,  parent = aContiBlock
+-  sizeof(IntegrationMethod) = 48
+-  sizeof(SingleStepMethod) = 56,  parent = IntegrationMethod
+-  sizeof(MultiStepMethod) = 64,  parent = IntegrationMethod
+-  sizeof(StatusMethod) = 80,  parent = SingleStepMethod
+-  sizeof(Integrator) = 80,  parent = aContiBlock
+-  sizeof(Status) = 72,  parent = aContiBlock1
+-  sizeof(Hyst) = 112,  parent = Status
+-  sizeof(Blash) = 96,  parent = Status
+-  sizeof(Relay) = 120,  parent = Status
+-  sizeof(Function1) = 40,  parent = aContiBlock1
+-  sizeof(Function2) = 48,  parent = aContiBlock2
+-  sizeof(aCondition) = 32,  parent = aBlock
+-  sizeof(Condition) = 48,  parent = aCondition
+-  sizeof(ConditionUp) = 48,  parent = Condition
+-  sizeof(ConditionDown) = 48,  parent = Condition
+-  sizeof(Lim) = 56,  parent = aContiBlock1
+-  sizeof(Insv) = 64,  parent = aContiBlock1
+-  sizeof(Qntzr) = 40,  parent = aContiBlock1
+-  sizeof(Frict) = 56,  parent = aContiBlock1
+-  sizeof(Rline) = 56,  parent = aContiBlock1
+-  sizeof(AlgLoop) = 88,  parent = aContiBlock1
+-  sizeof(Iterations) = 88,  parent = AlgLoop
+-  sizeof(Bisect) = 88,  parent = AlgLoop
+-  sizeof(RegulaFalsi) = 96,  parent = AlgLoop
+-  sizeof(Newton) = 104,  parent = AlgLoop
+-  sizeof(Semaphore) = 232,  parent = SimObject
+-  sizeof(Barrier) = 40,  parent = SimObject
++  sizeof(aContiBlock1) = 24,  parent = aContiBlock
++  sizeof(Expression) = 24,  parent = aContiBlock1
++  sizeof(aContiBlock2) = 32,  parent = aContiBlock
++  sizeof(aContiBlock3) = 40,  parent = aContiBlock
++  sizeof(IntegrationMethod) = 56
++  sizeof(SingleStepMethod) = 64,  parent = IntegrationMethod
++  sizeof(MultiStepMethod) = 72,  parent = IntegrationMethod
++  sizeof(StatusMethod) = 96,  parent = SingleStepMethod
++  sizeof(Integrator) = 72,  parent = aContiBlock
++  sizeof(Status) = 64,  parent = aContiBlock1
++  sizeof(Hyst) = 104,  parent = Status
++  sizeof(Blash) = 88,  parent = Status
++  sizeof(Relay) = 112,  parent = Status
++  sizeof(Function1) = 32,  parent = aContiBlock1
++  sizeof(Function2) = 40,  parent = aContiBlock2
++  sizeof(aCondition) = 24,  parent = aBlock
++  sizeof(Condition) = 40,  parent = aCondition
++  sizeof(ConditionUp) = 40,  parent = Condition
++  sizeof(ConditionDown) = 40,  parent = Condition
++  sizeof(Lim) = 48,  parent = aContiBlock1
++  sizeof(Insv) = 56,  parent = aContiBlock1
++  sizeof(Qntzr) = 32,  parent = aContiBlock1
++  sizeof(Frict) = 48,  parent = aContiBlock1
++  sizeof(Rline) = 48,  parent = aContiBlock1
++  sizeof(AlgLoop) = 80,  parent = aContiBlock1
++  sizeof(Iterations) = 80,  parent = AlgLoop
++  sizeof(Bisect) = 80,  parent = AlgLoop
++  sizeof(RegulaFalsi) = 88,  parent = AlgLoop
++  sizeof(Newton) = 96,  parent = AlgLoop
++  sizeof(Semaphore) = 200,  parent = SimObject
++  sizeof(Barrier) = 32,  parent = SimObject

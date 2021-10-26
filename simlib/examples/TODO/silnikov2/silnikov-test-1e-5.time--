@@ -1,0 +1,37 @@
+Script started on 2021-10-01: $ sh silnikov-test-1e-5.sh
+
+./silnikov-m abm4 1e-5
+method: abm4, stepsize=1e-05
+4.35user 0.00system 0:04.36elapsed 99%CPU (0avgtext+0avgdata 3996maxresident)k
+0inputs+360outputs (0major+164minor)pagefaults 0swaps
+
+./silnikov-m euler 1e-5
+method: euler, stepsize=1e-05
+5.93user 0.00system 0:05.93elapsed 100%CPU (0avgtext+0avgdata 4040maxresident)k
+0inputs+360outputs (0major+160minor)pagefaults 0swaps
+
+./silnikov-m rke 1e-5
+method: rke, stepsize=1e-05
+17.39user 0.00system 0:17.40elapsed 99%CPU (0avgtext+0avgdata 4004maxresident)k
+0inputs+344outputs (0major+164minor)pagefaults 0swaps
+
+./silnikov-m rkf3 1e-5
+method: rkf3, stepsize=1e-05
+8.42user 0.00system 0:08.42elapsed 99%CPU (0avgtext+0avgdata 4352maxresident)k
+0inputs+344outputs (0major+166minor)pagefaults 0swaps
+
+./silnikov-m rkf5 1e-5
+method: rkf5, stepsize=1e-05
+14.90user 0.00system 0:14.90elapsed 100%CPU (0avgtext+0avgdata 4380maxresident)k
+0inputs+344outputs (0major+170minor)pagefaults 0swaps
+
+./silnikov-m rkf8 1e-5
+method: rkf8, stepsize=1e-05
+27.47user 0.00system 0:27.48elapsed 99%CPU (0avgtext+0avgdata 4368maxresident)k
+0inputs+352outputs (0major+173minor)pagefaults 0swaps
+
+./silnikov-m fw 1e-5
+method: fw, stepsize=1e-05
+8.07user 0.00system 0:08.08elapsed 99%CPU (0avgtext+0avgdata 4112maxresident)k
+0inputs+328outputs (0major+164minor)pagefaults 0swaps
+

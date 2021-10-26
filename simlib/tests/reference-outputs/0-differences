@@ -1,0 +1,30 @@
+Mon Oct  4 19:08:14 CEST 2021
+===== 3d-test.out =====
+Files 3d-test.out and ../3d-test.out are identical
+===== barrier-test1.out =====
+Files barrier-test1.out and ../barrier-test1.out are identical
+===== barrier-test2.out =====
+Files barrier-test2.out and ../barrier-test2.out are identical
+===== delay-test.out =====
+Files delay-test.out and ../delay-test.out are identical
+===== process-test.out =====
+Files process-test.out and ../process-test.out are identical
+===== random-test.out =====
+Files random-test.out and ../random-test.out are identical
+===== sizeof-all-32.out =====
+***** NOT COMPARED ***** 
+===== sizeof-all-64.out =====
+4c4
+< SIMLIB Version  = SIMLIB 3.08 (Sep 23 2021 15:05:23)
+---
+> SIMLIB Version  = SIMLIB 3.08 (Oct  4 2021 19:04:03)
+===== test-calendar.out =====
+Files test-calendar.out and ../test-calendar.out are identical
+===== test4.out =====
+Files test4.out and ../test4.out are identical
+===== test5.out =====
+Files test5.out and ../test5.out are identical
+===== waituntil-test.out =====
+Files waituntil-test.out and ../waituntil-test.out are identical
+===== zdelay-test.out =====
+Files zdelay-test.out and ../zdelay-test.out are identical

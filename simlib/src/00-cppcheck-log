@@ -1,0 +1,152 @@
+[simlib.h:897]: (style) Value of pointer 'bp', which points to allocated memory, is copied in copy constructor instead of allocating new memory.
+[simlib.h:636]: (style) Class 'iterator' has a constructor with 1 argument that is not explicit.
+[simlib.h:900]: (style) Class 'Input' has a constructor with 1 argument that is not explicit.
+[simlib.h:901]: (style) Class 'Input' has a constructor with 1 argument that is not explicit.
+[simlib.h:905]: (style) Class 'Input' has a constructor with 1 argument that is not explicit.
+[_test_.cc:14]: (style) Struct 'Test' has a constructor with 1 argument that is not explicit.
+[simlib.h:1114] -> [simlib.h:1148]: (style) The function 'Integrate' overrides a function in a base class but is not marked with a 'override' specifier.
+[simlib.h:1112] -> [simlib.h:1149]: (style) The function 'IsSingleStep' overrides a function in a base class but is not marked with a 'override' specifier.
+[simlib.h:1112] -> [simlib.h:1173]: (style) The function 'IsSingleStep' overrides a function in a base class but is not marked with a 'override' specifier.
+[simlib.h:1115] -> [simlib.h:1182]: (style) The function 'PrepareStep' overrides a function in a base class but is not marked with a 'override' specifier.
+[simlib.h:1114] -> [simlib.h:1183]: (style) The function 'Integrate' overrides a function in a base class but is not marked with a 'override' specifier.
+[simlib.h:1113] -> [simlib.h:1184]: (style) The function 'TurnOff' overrides a function in a base class but is not marked with a 'override' specifier.
+[simlib.h:1113] -> [simlib.h:1233]: (style) The function 'TurnOff' overrides a function in a base class but is not marked with a 'override' specifier.
+[simlib.h:1148] -> [simlib.h:1234]: (style) The function 'Integrate' overrides a function in a base class but is not marked with a 'override' specifier.
+[simlib.h:1115] -> [simlib.h:1235]: (style) The function 'PrepareStep' overrides a function in a base class but is not marked with a 'override' specifier.
+[simlib.h:1507] -> [simlib.h:1528]: (style) The function 'Action' overrides a function in a base class but is not marked with a 'override' specifier.
+[simlib.h:1528] -> [simlib.h:1539]: (style) The function 'Action' overrides a function in a base class but is not marked with a 'override' specifier.
+[simlib.h:1528] -> [simlib.h:1550]: (style) The function 'Action' overrides a function in a base class but is not marked with a 'override' specifier.
+[simlib.h:839] -> [simlib.h:1672]: (style) The function 'Value' overrides a function in a base class but is not marked with a 'override' specifier.
+[algloop.cc:181]: (style) The scope of the variable 'count' can be reduced.
+[algloop.cc:185]: (style) The scope of the variable 'ft' can be reduced.
+[algloop.cc:287]: (style) The scope of the variable 'count' can be reduced.
+[algloop.cc:289]: (style) The scope of the variable 'feps' can be reduced.
+[algloop.cc:290]: (style) The scope of the variable 'prev_root' can be reduced.
+[algloop.cc:293]: (style) The scope of the variable 'ft' can be reduced.
+[algloop.cc:404]: (style) The scope of the variable 'count' can be reduced.
+[algloop.cc:406]: (style) The scope of the variable 'feps' can be reduced.
+[algloop.cc:409]: (style) The scope of the variable 'aux_root' can be reduced.
+[algloop.cc:410]: (style) The scope of the variable 'aux_ft' can be reduced.
+[internal.h:320]: (style) Class 'AlgLoopDetector' has a constructor with 1 argument that is not explicit.
+[calendar.cc:1186]: (style) Variable 'cnt' is modified but its new value is never used.
+[calendar.cc:395] -> [calendar.cc:375]: (warning) Virtual function 'clear' is called from destructor '~CalendarList()' at line 395. Dynamic binding is not used.
+[calendar.cc:1124] -> [calendar.cc:592]: (warning) Virtual function 'clear' is called from destructor '~CalendarQueue()' at line 1124. Dynamic binding is not used.
+[calendar.cc:270]: (style) Class 'iterator' has a constructor with 1 argument that is not explicit.
+[calendar.cc:82] -> [calendar.cc:400]: (style) The function 'debug_print' overrides a function in a base class but is not marked with a 'override' specifier.
+[calendar.cc:82] -> [calendar.cc:614]: (style) The function 'debug_print' overrides a function in a base class but is not marked with a 'override' specifier.
+[continuous.cc:241]: (style) Class '_UMinus' has a constructor with 1 argument that is not explicit.
+[simlib.h:315] -> [continuous.cc:270]: (style) The function 'Name' overrides a function in a base class but is not marked with a 'override' specifier.
+[facility.cc:86] -> [simlib.h:771]: (warning) Virtual function 'Clear' is called from destructor '~Facility()' at line 86. Dynamic binding is not used.
+[list.cc:49] -> [list.cc:162] -> [list.cc:126] -> [simlib.h:662]: (warning) Virtual function 'Get' is called from destructor '~List()' at line 49. Dynamic binding is not used.
+[simlib.h:1183] -> [ni_abm4.h:38]: (style) The function 'Integrate' overrides a function in a base class but is not marked with a 'override' specifier.
+[simlib.h:1182] -> [ni_abm4.h:39]: (style) The function 'PrepareStep' overrides a function in a base class but is not marked with a 'override' specifier.
+[ni_euler.h:27]: (style) Class 'EULER' has a constructor with 1 argument that is not explicit.
+[simlib.h:1234] -> [ni_euler.h:32]: (style) The function 'Integrate' overrides a function in a base class but is not marked with a 'override' specifier.
+[ni_fw.cc:192]: (style) Expression 'exp(x) - 1' can be replaced by 'expm1(x)' to avoid loss of precision.
+[ni_fw.h:29]: (style) Class 'FW' has a constructor with 1 argument that is not explicit.
+[simlib.h:1115] -> [ni_fw.h:35]: (style) The function 'PrepareStep' overrides a function in a base class but is not marked with a 'override' specifier.
+[simlib.h:1148] -> [ni_fw.h:36]: (style) The function 'Integrate' overrides a function in a base class but is not marked with a 'override' specifier.
+[ni_rke.h:29]: (style) Class 'RKE' has a constructor with 1 argument that is not explicit.
+[simlib.h:1234] -> [ni_rke.h:34]: (style) The function 'Integrate' overrides a function in a base class but is not marked with a 'override' specifier.
+[ni_rkf3.h:26]: (style) Class 'RKF3' has a constructor with 1 argument that is not explicit.
+[simlib.h:1148] -> [ni_rkf3.h:31]: (style) The function 'Integrate' overrides a function in a base class but is not marked with a 'override' specifier.
+[ni_rkf5.h:26]: (style) Class 'RKF5' has a constructor with 1 argument that is not explicit.
+[simlib.h:1148] -> [ni_rkf5.h:31]: (style) The function 'Integrate' overrides a function in a base class but is not marked with a 'override' specifier.
+[ni_rkf8.h:27]: (style) Class 'RKF8' has a constructor with 1 argument that is not explicit.
+[simlib.h:1148] -> [ni_rkf8.h:32]: (style) The function 'Integrate' overrides a function in a base class but is not marked with a 'override' specifier.
+[process.cc:0]: (information) This file is not analyzed. Cppcheck failed to extract a valid configuration. Use -v for more details.
+[random2.cc:37]: (style) The scope of the variable 'i' can be reduced.
+[random2.cc:38]: (style) The scope of the variable 'PROD' can be reduced.
+[random2.cc:123]: (style) The scope of the variable 'R' can be reduced.
+[random2.cc:231]: (style) The scope of the variable 'Y' can be reduced.
+[random2.cc:231]: (style) The scope of the variable 'X' can be reduced.
+[run.cc:65]: (warning) Member variable 'SIMLIB_statistics_t::StartTime' is not initialized in the constructor.
+[run.cc:65]: (warning) Member variable 'SIMLIB_statistics_t::EndTime' is not initialized in the constructor.
+[simlib2D.h:114]: (style) Class 'Input2D' has a constructor with 1 argument that is not explicit.
+[simlib2D.h:115]: (style) Class 'Input2D' has a constructor with 1 argument that is not explicit.
+[simlib2D.h:195]: (style) Class 'Integrator2D' has a constructor with 1 argument that is not explicit.
+[simlib2D.h:188]: (style) Class 'special_input' has a constructor with 1 argument that is not explicit.
+[simlib2D.cc:322]: (style) Class '_UMinus2D' has a constructor with 1 argument that is not explicit.
+[simlib2D.cc:347]: (style) Class '_Abs2D' has a constructor with 1 argument that is not explicit.
+[simlib2D.cc:360]: (style) Class '_Norm2D' has a constructor with 1 argument that is not explicit.
+[simlib2D.h:69] -> [simlib2D.h:205]: (style) The function 'Value' overrides a function in a base class but is not marked with a 'override' specifier.
+[simlib3D.h:114]: (style) Class 'Input3D' has a constructor with 1 argument that is not explicit.
+[simlib3D.h:115]: (style) Class 'Input3D' has a constructor with 1 argument that is not explicit.
+[simlib3D.h:196]: (style) Class 'Integrator3D' has a constructor with 1 argument that is not explicit.
+[simlib3D.h:189]: (style) Class 'special_input' has a constructor with 1 argument that is not explicit.
+[simlib3D.cc:341]: (style) Class '_UMinus3D' has a constructor with 1 argument that is not explicit.
+[simlib3D.cc:366]: (style) Class '_Abs3D' has a constructor with 1 argument that is not explicit.
+[simlib3D.cc:379]: (style) Class '_Norm3D' has a constructor with 1 argument that is not explicit.
+[store.cc:95] -> [simlib.h:808]: (warning) Virtual function 'Clear' is called from destructor '~Store()' at line 95. Dynamic binding is not used.
+[version.cc:9]: (information) Skipping configuration '__SIMLIB__;__SIMLIB__INTERNAL_H__' since the value of '__SIMLIB__' is unknown. Use -D if you want to check it. You can use -U to skip it explicitly.
+[zdelay.cc:209] -> [zdelay.h:75]: (warning) Virtual function 'Init' is called from constructor 'ZDelay(Input i,ZDelayTimer*clock=default_clock,double initvalue=0)' at line 209. Dynamic binding is not used.
+[zdelay.cc:224] -> [zdelay.h:75]: (warning) Virtual function 'Init' is called from constructor 'ZDelay(Input i,double initvalue)' at line 224. Dynamic binding is not used.
+[fun.cc:101]: (style) The function 'ACos' is never used.
+[fun.cc:100]: (style) The function 'ASin' is never used.
+[fun.cc:102]: (style) The function 'ATan' is never used.
+[fun.cc:103]: (style) The function 'ATan2' is never used.
+[run.cc:159]: (style) The function 'Abort' is never used.
+[fun.cc:94]: (style) The function 'Abs' is never used.
+[random2.cc:181]: (style) The function 'Beta' is never used.
+[barrier.cc:125]: (style) The function 'ChangeHeight' is never used.
+[fun.cc:97]: (style) The function 'Cos' is never used.
+[debug.cc:42]: (style) The function 'DebugOFF' is never used.
+[debug.cc:36]: (style) The function 'DebugON' is never used.
+[barrier.cc:62]: (style) The function 'Enter' is never used.
+[random2.cc:109]: (style) The function 'Erlang' is never used.
+[fun.cc:105]: (style) The function 'Exp' is never used.
+[random2.cc:152]: (style) The function 'Exponential' is never used.
+[numint.cc:337]: (style) The function 'FunCall' is never used.
+[random2.cc:141]: (style) The function 'Gamma' is never used.
+[random2.cc:257]: (style) The function 'Geom' is never used.
+[numint.cc:322]: (style) The function 'GetErrNo' is never used.
+[list.cc:132]: (style) The function 'GetLast' is never used.
+[name.cc:66]: (style) The function 'GetName' is never used.
+[random2.cc:270]: (style) The function 'HyperGeom' is never used.
+[numint.cc:298]: (style) The function 'InitStep' is never used.
+[list.cc:56]: (style) The function 'InsFirst' is never used.
+[run.cc:104]: (style) The function 'InstallBreak' is never used.
+[link.cc:53]: (style) The function 'Into' is never used.
+[numint.cc:317]: (style) The function 'IsConditionFlag' is never used.
+[store.cc:152]: (style) The function 'Leave' is never used.
+[fun.cc:107]: (style) The function 'Ln' is never used.
+[fun.cc:106]: (style) The function 'Log10' is never used.
+[random2.cc:210]: (style) The function 'Logar' is never used.
+[random2.cc:121]: (style) The function 'NegBin' is never used.
+[random2.cc:164]: (style) The function 'NegBinM' is never used.
+[opt-hooke.cc:57]: (style) The function 'Optimize_hooke' is never used.
+[opt-simann.cc:52]: (style) The function 'Optimize_simann' is never used.
+[semaphor.cc:77]: (style) The function 'P' is never used.
+[random2.cc:229]: (style) The function 'Poisson' is never used.
+[list.cc:86]: (style) The function 'PostIns' is never used.
+[fun.cc:108]: (style) The function 'Pow' is never used.
+[random1.cc:64]: (style) The function 'RandomSeed' is never used.
+[random2.cc:219]: (style) The function 'Rayle' is never used.
+[facility.cc:151]: (style) The function 'Release' is never used.
+[name.cc:54]: (style) The function 'RemoveName' is never used.
+[version.cc:13]: (style) The function 'SIMLIB_version_string' is never used.
+[simlib2D.cc:389]: (style) The function 'ScalarProduct' is never used.
+[random1.cc:103]: (style) The function 'SetBaseRandomGenerator' is never used.
+[calendar.cc:1250]: (style) The function 'SetCalendar' is never used.
+[store.cc:102]: (style) The function 'SetCapacity' is never used.
+[numint.cc:327]: (style) The function 'SetErrNo' is never used.
+[numint.cc:307]: (style) The function 'SetOptStep' is never used.
+[print.cc:50]: (style) The function 'SetOutput' is never used.
+[facility.cc:95]: (style) The function 'SetQueue' is never used.
+[numint.cc:312]: (style) The function 'SetStepSize' is never used.
+[fun.cc:110]: (style) The function 'Sign' is never used.
+[continuous.cc:233]: (style) The function 'Sqr' is never used.
+[fun.cc:112]: (style) The function 'Sqrt' is never used.
+[run.cc:147]: (style) The function 'Stop' is never used.
+[fun.cc:98]: (style) The function 'Tan' is never used.
+[random2.cc:193]: (style) The function 'Triag' is never used.
+[random2.cc:71]: (style) The function 'Uniform' is never used.
+[simlib2D.cc:388]: (style) The function 'UnitVector' is never used.
+[semaphor.cc:92]: (style) The function 'V' is never used.
+[waitunti.cc:75]: (style) The function 'WU_print' is never used.
+[random2.cc:94]: (style) The function 'Weibul' is never used.
+[simlib2D.cc:420]: (style) The function 'Xpart' is never used.
+[simlib2D.cc:421]: (style) The function 'Ypart' is never used.
+[simlib3D.cc:442]: (style) The function 'Zpart' is never used.
+[calendar.cc:1170]: (style) The function 'visualize' is never used.
+(information) Cppcheck cannot find all the include files (use --check-config for details)

@@ -1,0 +1,19 @@
+
+New features:
+
+3.08:
+
+ - Incompatible change:
+   Public member Facility::in protected and replaced by method In()
+   Solution: replace  fac.in => fac.In()
+
+ - Incompatible change:
+   Return type of SimObject::Name() changed to std::string
+   Solution: add .c_str() if used in Print/printf (e.g. obj.Name().c_str())
+
+ - using some C++11 features (we need newer compiler)
+
+ - cppcheck warnings mostly eliminated
+
+ - bugfixes
+
