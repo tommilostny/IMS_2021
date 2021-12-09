@@ -9,3 +9,17 @@
 * [Wikipedia: 2020–2021 global chip shortage](https://en.wikipedia.org/wiki/2020%E2%80%932021_global_chip_shortage)
 * [Google: semiconductor wafer](https://www.google.com/search?q=semiconductor+wafer&oq=semiconductor+wa&aqs=edge.0.0i512j69i57j0i512l2j0i22i30l5.3641j0j1&sourceid=chrome&ie=UTF-8)
 * [Wikipedia: Wafer](https://cs.wikipedia.org/wiki/Wafer)
+
+---
+
+## Kolik čipů bude v roce 2030?
+
+* Časové rozmezí 2020-2030.
+* Vyrobeno čipů na začátku.
+* Spotřeba čipů na začátku.
+* Počet továren, kapacita výroby, stavba (generování) random po x letech (asi moc komplikované), fixed podle reálu.
+* Najít hlavní výrobce (TSMC, Intel, ...)
+* Největší spotřebitelé čipů (auto průmysl, Samsung, AMD, NVIDIA, Apple, ...)
+* Úspěšnost výroby v %. Tovrárna vyrábí v rozmezí, potom aplikace úspěšnosti/vyhození zmetků)
+* Celkový sklad. Časovaně náhodně chodí objednávky a odebírají ze skladu továrny, pokud nemají dost na skladě stoupnou do fronty a čekají na požadovanou kapacitu.
+* Možnost zvyšování poptávky (čipů požadovaných výrobcem).
