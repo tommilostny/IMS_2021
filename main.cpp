@@ -2,7 +2,7 @@
 #include <simlib.h>
 #include <vector>
 
-#define SIMULATION_YEARS 10
+#define SIMULATION_YEARS 6
 
 #define HOURS_IN_MONTH 730
 #define HOURS_IN_YEAR 8760
@@ -26,12 +26,10 @@ public:
             {
                 storedChips += chips - awaitingOrders;
                 awaitingOrders = 0;
-                return;
             }
-            awaitingOrders -= chips;
-            return;
+            else awaitingOrders -= chips;
         }
-        storedChips += chips;
+        else storedChips += chips;
 
         std::cout << "Stored: " << storedChips << ", awaiting: " << awaitingOrders << " chips" << std::endl;
     }
@@ -63,6 +61,12 @@ public:
         : name(name), globalStorage(global), newFactoriesMonths(newFactoriesMonths), newFactoriesYears(newFactoriesYears)
     {
         hourlyChipProduction = yearlyWaferProduction * chipsPerWafer / HOURS_IN_YEAR;
+    }
+
+    Producer(uint64_t yearlyChipProduction, std::string name, Storage* global, std::vector<uint16_t> newFactoriesMonths, std::vector<uint16_t> newFactoriesYears)
+        : name(name), globalStorage(global), newFactoriesMonths(newFactoriesMonths), newFactoriesYears(newFactoriesYears)
+    {
+        hourlyChipProduction = yearlyChipProduction / HOURS_IN_YEAR;
     }
 
     void Behavior()
@@ -142,7 +146,7 @@ public:
             year++;
 
             for (auto consumer : consumers)
-                consumer->AddToOrderRate(0.1);
+                consumer->AddToOrderRate(0.02);
         }
         for (auto producer : producers)
             producer->UpdateProduction(month, year);
@@ -159,20 +163,29 @@ int main()
 
     std::vector<uint16_t> tsmcNewFactoryMonths = { 11, 1 };
     std::vector<uint16_t> tsmcNewFactoryYears = { 2021, 2024 };
+
     std::vector<uint16_t> samsungNewFactoryMonths = { 6 };
     std::vector<uint16_t> samsungNewFactoryYears = { 2024 };
+
+    std::vector<uint16_t> umcNewFactoryMonths = { 4 };
+    std::vector<uint16_t> umcNewFactoryYears = { 2023 };
+
+    std::vector<uint16_t> smicNewFactoryMonths = { 1, 1 };
+    std::vector<uint16_t> smicNewFactoryYears = { 2022, 2024 };
 
     std::vector<Producer*> producers = 
     {
         new Producer(12500000, 600, "TSMC", globalStorage, tsmcNewFactoryMonths, tsmcNewFactoryYears),
-        new Producer(3060000 * 12, 300, "Samsung", globalStorage, samsungNewFactoryMonths, samsungNewFactoryYears)
-        //auto Intel
-        //auto others
+        new Producer(3060000 * 12, 300, "Samsung", globalStorage, samsungNewFactoryMonths, samsungNewFactoryYears),
+        new Producer(800000 * 12, 300, "UMC", globalStorage, umcNewFactoryMonths, umcNewFactoryYears),
+        new Producer(120000 * 12, 600, "SMIC", globalStorage, smicNewFactoryMonths, smicNewFactoryYears),
+        new Producer(13643225807, "Others", globalStorage, {}, {})
     };
 
     std::vector<Consumer*> consumers = 
     {
-        new Consumer(13000000000, "Automotive", globalStorage)
+        new Consumer(29250000000, "Automotive", globalStorage),
+        new Consumer(6000000000, "Mobile", globalStorage),
     };
 
     for (auto producer : producers)
