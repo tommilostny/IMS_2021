@@ -3,9 +3,13 @@
 #include <vector>
 
 #define YEARS 10
+#define HOURS_IN_MONTH 730
 #define HOURS_IN_YEAR 8760
 #define HOURS_IN_DAY 24
 #define DAYS_IN_YEAR 365
+
+#define NEW_FACTORY_CHIPS_YEARLY 411466666
+#define NEW_FACTORY_CHIPS_HOURLY (NEW_FACTORY_CHIPS_YEARLY / HOURS_IN_YEAR)
 
 class Storage
 {
@@ -31,7 +35,7 @@ public:
         {
             storedChips += chips;
         }
-        std::cout << "Stored: " << storedChips << ", awaiting: " << awaitingOrders << " chips" << std::endl;
+        //std::cout << "Stored: " << storedChips << ", awaiting: " << awaitingOrders << " chips" << std::endl;
     }
 
     void Retrieve(uint64_t chips)
@@ -55,26 +59,43 @@ private:
     std::string name;
     uint64_t totalProduced = 0;
     Storage* globalStorage; // global storage to contribute produced chips to
+
+    std::vector<uint16_t> newFactoriesMonths; // months when new factories are created
+    std::vector<uint16_t> newFactoriesYears;  // years when new factories are created
 public:
-    Producer(uint64_t yearlyWaferProduction, uint16_t chipsPerWafer, std::string name, Storage* global) : name(name), globalStorage(global)
+    Producer(uint64_t yearlyWaferProduction, uint16_t chipsPerWafer, std::string name, Storage* global, std::vector<uint16_t> newFactoriesMonths, std::vector<uint16_t> newFactoriesYears)
+        : name(name), globalStorage(global), newFactoriesMonths(newFactoriesMonths), newFactoriesYears(newFactoriesYears)
     {
         hourlyChipProduction = yearlyWaferProduction * chipsPerWafer / HOURS_IN_YEAR;
     }
 
     void Behavior()
     {
-        auto produced = hourlyChipProduction * Normal(1.0, 0.1);
+        auto produced = hourlyChipProduction * Normal(1.0, 0.075);
         
         totalProduced += produced;
-        std::cout << name << ": total " << totalProduced << ", adding " << produced << " chips" << std::endl;
+        //std::cout << name << ": total " << totalProduced << ", adding " << produced << " chips" << std::endl;
 
         globalStorage->Add(produced);
         Activate(Time + 1);
     }
 
-    void UpdateProduction(double rate)
+    void UpdateProduction(uint16_t month, uint16_t year)
     {
-        hourlyChipProduction *= rate;
+        for (int i = 0; i < newFactoriesMonths.size(); i++)
+        {
+            if (newFactoriesMonths[i] == month && newFactoriesYears[i] == year)
+            {
+                newFactoriesMonths.erase(newFactoriesMonths.begin() + i);
+                newFactoriesYears.erase(newFactoriesYears.begin() + i);
+
+                std::cout << name << ": new factory created in " << month << "/" << year << ", increasing production from " << hourlyChipProduction;
+                hourlyChipProduction += NEW_FACTORY_CHIPS_HOURLY;
+                std::cout << " to " << hourlyChipProduction << std::endl;
+                return;
+            }
+        }
+        std::cout << name << ": " << month << "/" << year << std::endl;
     }
 };
 
@@ -104,28 +125,33 @@ public:
     }
 };
 
-class YearTracker : public Event
+class MonthYearTracker : public Event
 {
 public:
     uint16_t year;
+    uint16_t month = 1;
     std::vector<Producer*> producers;
     std::vector<Consumer*> consumers;
 
-    YearTracker(uint16_t startYear, std::vector<Producer*> producers, std::vector<Consumer*> consumers)
+    MonthYearTracker(uint16_t startYear, std::vector<Producer*> producers, std::vector<Consumer*> consumers)
         : year(startYear), producers(producers), consumers(consumers)
     {
     }
 
     void Behavior()
     {
-        std::cout << year << " -> ";
-        year++;
-        std::cout << year << std::endl;
+        if (++month > 12)
+        {
+            month = 1;
+            year++;
 
-        for (auto consumer : consumers)
-            consumer->AddToOrderRate(0.1);
+            for (auto consumer : consumers)
+                consumer->AddToOrderRate(0.1);
+        }
+        for (auto producer : producers)
+            producer->UpdateProduction(month, year);
 
-        Activate(Time + HOURS_IN_YEAR);
+        Activate(Time + HOURS_IN_MONTH);
     }
 };
 
@@ -135,17 +161,22 @@ int main()
     Init(0, HOURS_IN_YEAR * YEARS);
     auto globalStorage = new Storage();
 
+    std::vector<uint16_t> tsmcNewFactoryMonths = { 11, 1 };
+    std::vector<uint16_t> tsmcNewFactoryYears = { 2021, 2024 };
+    std::vector<uint16_t> samsungNewFactoryMonths = { 6 };
+    std::vector<uint16_t> samsungNewFactoryYears = { 2024 };
+
     std::vector<Producer*> producers = 
     {
-        new Producer(12500000, 600, "TSMC", globalStorage),
-        new Producer(3060000 * 12, 300, "Samsung", globalStorage)
+        new Producer(12500000, 600, "TSMC", globalStorage, tsmcNewFactoryMonths, tsmcNewFactoryYears),
+        new Producer(3060000 * 12, 300, "Samsung", globalStorage, samsungNewFactoryMonths, samsungNewFactoryYears)
         //auto Intel
         //auto others
     };
 
     std::vector<Consumer*> consumers = 
     {
-        new Consumer(15000000000, "Automotive", globalStorage)
+        new Consumer(13000000000, "Automotive", globalStorage)
     };
 
     for (auto producer : producers)
@@ -155,7 +186,7 @@ int main()
         consumer->Activate(Time + HOURS_IN_DAY);
 
     // Create year tracker that updates yearly production and order rates
-    (new YearTracker(2020, producers, consumers))->Activate(Time + HOURS_IN_YEAR);
+    (new MonthYearTracker(2020, producers, consumers))->Activate(Time + HOURS_IN_MONTH);
 
     Run();
 
