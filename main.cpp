@@ -2,7 +2,8 @@
 #include <simlib.h>
 #include <vector>
 
-#define YEARS 10
+#define SIMULATION_YEARS 10
+
 #define HOURS_IN_MONTH 730
 #define HOURS_IN_YEAR 8760
 #define HOURS_IN_DAY 24
@@ -25,30 +26,25 @@ public:
             {
                 storedChips += chips - awaitingOrders;
                 awaitingOrders = 0;
+                return;
             }
-            else
-            {
-                awaitingOrders -= chips;
-            }
+            awaitingOrders -= chips;
+            return;
         }
-        else
-        {
-            storedChips += chips;
-        }
-        //std::cout << "Stored: " << storedChips << ", awaiting: " << awaitingOrders << " chips" << std::endl;
+        storedChips += chips;
+
+        std::cout << "Stored: " << storedChips << ", awaiting: " << awaitingOrders << " chips" << std::endl;
     }
 
     void Retrieve(uint64_t chips)
     {
-        if (storedChips >= chips)
-        {
-            storedChips -= chips;
-        }
-        else
+        if (storedChips < chips)
         {
             awaitingOrders += chips - storedChips;
             storedChips = 0;
+            return;
         }
+        storedChips -= chips;
     }
 };
 
@@ -71,10 +67,10 @@ public:
 
     void Behavior()
     {
-        auto produced = hourlyChipProduction * Normal(1.0, 0.075);
+        auto produced = hourlyChipProduction * Normal(1.0, 0.05);
         
         totalProduced += produced;
-        //std::cout << name << ": total " << totalProduced << ", adding " << produced << " chips" << std::endl;
+        std::cout << name << ": total " << totalProduced << ", adding " << produced << " chips" << std::endl;
 
         globalStorage->Add(produced);
         Activate(Time + 1);
@@ -95,7 +91,7 @@ public:
                 return;
             }
         }
-        std::cout << name << ": " << month << "/" << year << std::endl;
+        //std::cout << name << ": " << month << "/" << year << std::endl;
     }
 };
 
@@ -158,7 +154,7 @@ public:
 int main()
 {
     // Simulate from 2020 to 2030 with 1 hour time step
-    Init(0, HOURS_IN_YEAR * YEARS);
+    Init(0, HOURS_IN_YEAR * SIMULATION_YEARS);
     auto globalStorage = new Storage();
 
     std::vector<uint16_t> tsmcNewFactoryMonths = { 11, 1 };
