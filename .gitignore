@@ -55,5 +55,6 @@ simlib/examples/wheel
 simlib/examples/wheel2
 
 example1
+main
 
 *.dat

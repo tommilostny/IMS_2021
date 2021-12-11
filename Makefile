@@ -5,18 +5,18 @@
 CC = g++
 CXXFLAGS = -g -O2 -I/usr/local/lib
 CXXLIBS = -lsimlib -lm
-OBJS = example1.o
+OBJS = main.o
 
 # Compile mytftpclient and its dependencies.
-example1: $(OBJS)
+main: $(OBJS)
 	$(CC) $(CXXFLAGS) $^ -o $@ $(CXXLIBS)
 
-run: example1
+run: main
 	./$^
 
 # Delete built files.
 clean:
-	rm -f *.o example1 xmilos02.tar
+	rm -f *.o main xmilos02.tar
 
 # Create .tar archive for project submission.
 tar:
