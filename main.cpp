@@ -9,7 +9,7 @@
 #define HOURS_IN_DAY 24
 #define DAYS_IN_YEAR 365
 
-#define NEW_FACTORY_CHIPS_YEARLY 411466666
+#define NEW_FACTORY_CHIPS_YEARLY 4379298246
 #define NEW_FACTORY_CHIPS_HOURLY (NEW_FACTORY_CHIPS_YEARLY / HOURS_IN_YEAR)
 
 class Storage
@@ -71,7 +71,7 @@ public:
 
     void Behavior()
     {
-        auto produced = hourlyChipProduction * Normal(1.0, 0.05);
+        auto produced = hourlyChipProduction * Normal(1.0, 0.1);
         
         totalProduced += produced;
         std::cout << name << ": total " << totalProduced << ", adding " << produced << " chips" << std::endl;
@@ -146,7 +146,7 @@ public:
             year++;
 
             for (auto consumer : consumers)
-                consumer->AddToOrderRate(0.02);
+                consumer->AddToOrderRate(0.1);
         }
         for (auto producer : producers)
             producer->UpdateProduction(month, year);
@@ -175,16 +175,16 @@ int main()
 
     std::vector<Producer*> producers = 
     {
-        new Producer(12500000, 600, "TSMC", globalStorage, tsmcNewFactoryMonths, tsmcNewFactoryYears),
-        new Producer(3060000 * 12, 300, "Samsung", globalStorage, samsungNewFactoryMonths, samsungNewFactoryYears),
-        new Producer(800000 * 12, 300, "UMC", globalStorage, umcNewFactoryMonths, umcNewFactoryYears),
-        new Producer(120000 * 12, 600, "SMIC", globalStorage, smicNewFactoryMonths, smicNewFactoryYears),
-        new Producer(13643225807, "Others", globalStorage, {}, {})
+        new Producer(12500000, 7000, "TSMC", globalStorage, tsmcNewFactoryMonths, tsmcNewFactoryYears),
+        new Producer(3060000 * 12, 3500, "Samsung", globalStorage, samsungNewFactoryMonths, samsungNewFactoryYears),
+        new Producer(800000 * 12, 3500, "UMC", globalStorage, umcNewFactoryMonths, umcNewFactoryYears),
+        new Producer(120000 * 12, 7000, "SMIC", globalStorage, smicNewFactoryMonths, smicNewFactoryYears),
+        new Producer(159170967742, "Others", globalStorage, {}, {})
     };
 
     std::vector<Consumer*> consumers = 
     {
-        new Consumer(29250000000, "Automotive", globalStorage),
+        new Consumer(88000000000, "Automotive", globalStorage),
         new Consumer(6000000000, "Mobile", globalStorage),
     };
 
