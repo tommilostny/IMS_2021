@@ -13,11 +13,12 @@ chipshortage: $(OBJS)
 
 run: chipshortage
 	./$^
+	gnuplot plot.gnuplot
 
 # Delete built files.
 clean:
-	rm -f *.o chipshortage xmilos02.tar
+	rm -f *.o chipshortage 02_xmilos02_xrivol01.zip chipshortage.png chipshortage.txt
 
 # Create .tar archive for project submission.
-tar:
-	tar -cf xmilos02.tar *.cpp *.hpp Makefile manual.pdf README.md
+zip:
+	zip 02_xmilos02_xrivol01.zip main.cpp Makefile dokumentace.pdf plot.gnuplot

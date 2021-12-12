@@ -30,7 +30,7 @@ public:
         {
             if (chips > awaitingOrders)
             {
-                storedChips += chips - awaitingOrders;
+                storedChips = chips - awaitingOrders;
                 awaitingOrders = 0;
             }
             else awaitingOrders -= chips;
@@ -45,9 +45,8 @@ public:
         {
             awaitingOrders += chips - storedChips;
             storedChips = 0;
-            return;
         }
-        storedChips -= chips;
+        else storedChips -= chips;
         Plot();
     }
 private:
