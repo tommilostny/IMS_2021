@@ -35,8 +35,6 @@ public:
             else awaitingOrders -= chips;
         }
         else storedChips += chips;
-
-        //std::cout << "Stored: " << storedChips << ", awaiting: " << awaitingOrders << " chips" << std::endl;
         Plot();
     }
 
@@ -90,10 +88,6 @@ public:
     void Behavior()
     {
         auto produced = hourlyChipProduction * Normal(1.0, 0.01);
-        
-        totalProduced += produced;
-        //std::cout << name << ": total " << totalProduced << ", adding " << produced << " chips" << std::endl;
-
         globalStorage->Add(produced);
         Activate(Time + 1);
     }
@@ -104,12 +98,9 @@ public:
         {
             if (newFactoriesMonths[i] == month && newFactoriesYears[i] == year)
             {
-                //std::cout << name << ": new factory created in " << month << "/" << year << ", increasing production from " << hourlyChipProduction;
                 hourlyChipProduction *= Normal(NEW_FACTORY_UPGRADE_FACTOR, 0.01);
-                //std::cout << " to " << hourlyChipProduction << std::endl;
             }
         }
-        //std::cout << name << ": " << month << "/" << year << std::endl;
     }
 };
 
@@ -172,10 +163,10 @@ int main()
 {
     if ((outputFile = fopen("chipshortage.txt", "w")) == NULL)
     {
-        std::cout << "Error opening output file." << std::endl;
+        std::cerr << "Error opening output file." << std::endl;
         return 1;
     }
-    // Simulate from 2020 to 2027 with 1 hour time step
+    // Simulate from 2020 to 2030 with 1 hour time step
     Init(0, HOURS_IN_YEAR * SIMULATION_YEARS);
     auto globalStorage = new Storage();
 
