@@ -104,11 +104,9 @@ public:
         {
             if (newFactoriesMonths[i] == month && newFactoriesYears[i] == year)
             {
-                std::cout << name << ": new factory created in " << month << "/" << year << ", increasing production from " << hourlyChipProduction;
-
+                //std::cout << name << ": new factory created in " << month << "/" << year << ", increasing production from " << hourlyChipProduction;
                 hourlyChipProduction *= Normal(NEW_FACTORY_UPGRADE_FACTOR, 0.01);
-
-                std::cout << " to " << hourlyChipProduction << std::endl;
+                //std::cout << " to " << hourlyChipProduction << std::endl;
             }
         }
         //std::cout << name << ": " << month << "/" << year << std::endl;
@@ -214,14 +212,6 @@ int main()
         new Consumer(92631578947,  "Consumer electronics", globalStorage),
         new Consumer(92631578947,  "Industrial", globalStorage),
         new Consumer(7719298246,   "Government", globalStorage),
-        /*
-        new Consumer(40470000000,  "Automotive",           globalStorage),
-        new Consumer(110760000000, "Communications",       globalStorage),
-        new Consumer(114665000000, "Computers",            globalStorage),
-        new Consumer(42600000000,  "Consumer electronics", globalStorage),
-        new Consumer(42600000000,  "Industrial",           globalStorage),
-        new Consumer(3550000000,   "Government",           globalStorage),
-        */
     };
 
     for (auto producer : producers)
