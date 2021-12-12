@@ -2,14 +2,14 @@
 #include <simlib.h>
 #include <vector>
 
-#define SIMULATION_YEARS 7
+#define SIMULATION_YEARS 7 //2020 - 2027
 
 #define HOURS_IN_MONTH 730
 #define HOURS_IN_YEAR 8760
 #define HOURS_IN_DAY 24
 #define DAYS_IN_YEAR 365
 
-#define NEW_FACTORY_UPGRADE_FACTOR 1.35
+#define NEW_FACTORY_UPGRADE_FACTOR 1.5
 
 class Storage
 {
@@ -17,8 +17,6 @@ private:
     uint64_t storedChips = 0;    // number of chips stored
     uint64_t awaitingOrders = 0; // amount of ordered chips awaiting to be processed
 public:
-    Storage(uint64_t startStorage) : storedChips(startStorage) {}
-
     void Add(uint64_t chips)
     {     
         if (awaitingOrders > 0)
@@ -90,7 +88,7 @@ public:
                 std::cout << name << ": new factory created in " << month << "/" << year << ", increasing production from " << hourlyChipProduction;
 
                 hourlyChipProduction *= Normal(NEW_FACTORY_UPGRADE_FACTOR, 0.01);
-                
+
                 std::cout << " to " << hourlyChipProduction << std::endl;
             }
         }
@@ -158,7 +156,10 @@ int main()
 {
     // Simulate from 2020 to 2027 with 1 hour time step
     Init(0, HOURS_IN_YEAR * SIMULATION_YEARS);
-    auto globalStorage = new Storage(1000000);
+    auto globalStorage = new Storage();
+
+    std::vector<uint16_t> intelNewFactoryMonths = { 10, (uint16_t)(4 + Uniform(6, 9)), 6, 6 };
+    std::vector<uint16_t> intelNewFactoryYears = { 2021, 2021, 2024, 2024 };
 
     std::vector<uint16_t> tsmcNewFactoryMonths = { 10, 1 };
     std::vector<uint16_t> tsmcNewFactoryYears = { 2021, 2024 };
@@ -172,27 +173,32 @@ int main()
     std::vector<uint16_t> smicNewFactoryMonths = { 1, 1 };
     std::vector<uint16_t> smicNewFactoryYears = { 2022, 2024 };
 
-    std::vector<uint16_t> intelNewFactoryMonths = { 10, (uint16_t)(4 + Uniform(6, 9)), 6, 6 };
-    std::vector<uint16_t> intelNewFactoryYears = { 2021, 2021, 2024, 2024 };
-
     std::vector<Producer*> producers = 
     {
-        new Producer(13000000, 7000, "TSMC", globalStorage, tsmcNewFactoryMonths, tsmcNewFactoryYears),
+        new Producer(194675000000,       "Intel",   globalStorage, intelNewFactoryMonths, intelNewFactoryYears),
+        new Producer(13000000,     7000, "TSMC",    globalStorage, tsmcNewFactoryMonths, tsmcNewFactoryYears),
         new Producer(3060000 * 12, 3500, "Samsung", globalStorage, samsungNewFactoryMonths, samsungNewFactoryYears),
-        new Producer(800000 * 12, 3500, "UMC", globalStorage, umcNewFactoryMonths, umcNewFactoryYears),
-        new Producer(120000 * 12, 7000, "SMIC", globalStorage, smicNewFactoryMonths, smicNewFactoryYears),
-        new Producer(159170967742, "Others", globalStorage, {}, {}),
-        new Producer(240842105263, "Intel", globalStorage, intelNewFactoryMonths, intelNewFactoryYears)
+        new Producer(800000 * 12,  3500, "UMC",     globalStorage, umcNewFactoryMonths, umcNewFactoryYears),
+        new Producer(120000 * 12,  7000, "SMIC",    globalStorage, smicNewFactoryMonths, smicNewFactoryYears),
+        new Producer(159170967742,       "Others",  globalStorage, {}, {}),
     };
 
     std::vector<Consumer*> consumers = 
     {
-        new Consumer(88000000000, "Automotive", globalStorage),
+        new Consumer(88000000000,  "Automotive", globalStorage),
         new Consumer(240842105263, "Communications", globalStorage),
         new Consumer(249333333333, "Computers", globalStorage),
-        new Consumer(92631578947, "Consumer electronics", globalStorage),
-        new Consumer(92631578947, "Industrial", globalStorage),
-        new Consumer(7719298246, "Government", globalStorage),
+        new Consumer(92631578947,  "Consumer electronics", globalStorage),
+        new Consumer(92631578947,  "Industrial", globalStorage),
+        new Consumer(7719298246,   "Government", globalStorage),
+        /*
+        new Consumer(40470000000,  "Automotive",           globalStorage),
+        new Consumer(110760000000, "Communications",       globalStorage),
+        new Consumer(114665000000, "Computers",            globalStorage),
+        new Consumer(42600000000,  "Consumer electronics", globalStorage),
+        new Consumer(42600000000,  "Industrial",           globalStorage),
+        new Consumer(3550000000,   "Government",           globalStorage),
+        */
     };
 
     for (auto producer : producers)
