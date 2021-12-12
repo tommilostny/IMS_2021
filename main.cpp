@@ -2,20 +2,26 @@
 #include <simlib.h>
 #include <vector>
 
-#define SIMULATION_YEARS 7 //2020 - 2027
+#define SIMULATION_YEARS 10 //2020 - 2030
 
 #define HOURS_IN_MONTH 730
 #define HOURS_IN_YEAR 8760
 #define HOURS_IN_DAY 24
 #define DAYS_IN_YEAR 365
 
-#define NEW_FACTORY_UPGRADE_FACTOR 1.5
+#define NEW_FACTORY_UPGRADE_FACTOR 1.45
+
+FILE* outputFile;
+uint16_t year;
+uint16_t month = 1;
 
 class Storage
 {
 private:
     uint64_t storedChips = 0;    // number of chips stored
     uint64_t awaitingOrders = 0; // amount of ordered chips awaiting to be processed
+
+    uint64_t forPlot[3] = { 0, 0, 0 };
 public:
     void Add(uint64_t chips)
     {     
@@ -30,7 +36,8 @@ public:
         }
         else storedChips += chips;
 
-        std::cout << "Stored: " << storedChips << ", awaiting: " << awaitingOrders << " chips" << std::endl;
+        //std::cout << "Stored: " << storedChips << ", awaiting: " << awaitingOrders << " chips" << std::endl;
+        Plot();
     }
 
     void Retrieve(uint64_t chips)
@@ -42,6 +49,18 @@ public:
             return;
         }
         storedChips -= chips;
+        Plot();
+    }
+private:
+    void Plot()
+    {
+        if (forPlot[0] != Time)
+        {
+            fprintf(outputFile, "%g\t%lu\t%lu\n", Time, forPlot[1], forPlot[2]);
+        }
+        forPlot[0] = Time;
+        forPlot[1] = storedChips;
+        forPlot[2] = awaitingOrders;
     }
 };
 
@@ -125,14 +144,13 @@ public:
 class MonthYearTracker : public Event
 {
 public:
-    uint16_t year;
-    uint16_t month = 1;
     std::vector<Producer*> producers;
     std::vector<Consumer*> consumers;
 
     MonthYearTracker(uint16_t startYear, std::vector<Producer*> producers, std::vector<Consumer*> consumers)
-        : year(startYear), producers(producers), consumers(consumers)
+        : producers(producers), consumers(consumers)
     {
+        year = startYear;
     }
 
     void Behavior()
@@ -143,7 +161,7 @@ public:
             year++;
 
             for (auto consumer : consumers)
-                consumer->AddToOrderRate(Normal(0.1, 0.01));
+                consumer->AddToOrderRate(Normal(0.11, 0.01));
         }
         for (auto producer : producers)
             producer->UpdateProduction(month, year);
@@ -154,6 +172,11 @@ public:
 
 int main()
 {
+    if ((outputFile = fopen("chipshortage.txt", "w")) == NULL)
+    {
+        std::cout << "Error opening output file." << std::endl;
+        return 1;
+    }
     // Simulate from 2020 to 2027 with 1 hour time step
     Init(0, HOURS_IN_YEAR * SIMULATION_YEARS);
     auto globalStorage = new Storage();
@@ -213,5 +236,6 @@ int main()
     Run();
 
     delete globalStorage;
+    fclose(outputFile);
     return 0;
 }

@@ -56,5 +56,7 @@ simlib/examples/wheel2
 
 example1
 main
+chipshortage
 
 *.dat
+*.txt

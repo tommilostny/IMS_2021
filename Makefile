@@ -8,15 +8,15 @@ CXXLIBS = -lsimlib -lm
 OBJS = main.o
 
 # Compile mytftpclient and its dependencies.
-main: $(OBJS)
+chipshortage: $(OBJS)
 	$(CC) $(CXXFLAGS) $^ -o $@ $(CXXLIBS)
 
-run: main
+run: chipshortage
 	./$^
 
 # Delete built files.
 clean:
-	rm -f *.o main xmilos02.tar
+	rm -f *.o chipshortage xmilos02.tar
 
 # Create .tar archive for project submission.
 tar:
