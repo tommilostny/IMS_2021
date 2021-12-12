@@ -2,7 +2,7 @@
 #include <simlib.h>
 #include <vector>
 
-#define SIMULATION_YEARS 6
+#define SIMULATION_YEARS 7
 
 #define HOURS_IN_MONTH 730
 #define HOURS_IN_YEAR 8760
@@ -93,7 +93,7 @@ public:
 
                 std::cout << name << ": new factory created in " << month << "/" << year << ", increasing production from " << hourlyChipProduction;
 
-                hourlyChipProduction *= 1.6;//NEW_FACTORY_CHIPS_HOURLY;
+                hourlyChipProduction *= 1.5;//NEW_FACTORY_CHIPS_HOURLY;
                 
                 std::cout << " to " << hourlyChipProduction << std::endl;
             }
@@ -149,7 +149,7 @@ public:
             year++;
 
             for (auto consumer : consumers)
-                consumer->AddToOrderRate(0.1);
+                consumer->AddToOrderRate(Normal(0.1, 0.001));
         }
         for (auto producer : producers)
             producer->UpdateProduction(month, year);
@@ -160,7 +160,7 @@ public:
 
 int main()
 {
-    // Simulate from 2020 to 2030 with 1 hour time step
+    // Simulate from 2020 to 2027 with 1 hour time step
     Init(0, HOURS_IN_YEAR * SIMULATION_YEARS);
     auto globalStorage = new Storage(1000000);
 
@@ -185,7 +185,7 @@ int main()
         new Producer(3060000 * 12, 3500, "Samsung", globalStorage, samsungNewFactoryMonths, samsungNewFactoryYears),
         new Producer(800000 * 12, 3500, "UMC", globalStorage, umcNewFactoryMonths, umcNewFactoryYears),
         new Producer(120000 * 12, 7000, "SMIC", globalStorage, smicNewFactoryMonths, smicNewFactoryYears),
-        //new Producer(159170967742, "Others", globalStorage, {}, {}),
+        new Producer(159170967742, "Others", globalStorage, {}, {}),
         new Producer(240842105263, "Intel", globalStorage, intelNewFactoryMonths, intelNewFactoryYears)
     };
 
