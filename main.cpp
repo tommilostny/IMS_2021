@@ -20,9 +20,10 @@ class Storage
 private:
     uint64_t storedChips = 0;    // number of chips stored
     uint64_t awaitingOrders = 0; // amount of ordered chips awaiting to be processed
-
     uint64_t forPlot[3] = { 0, 0, 0 };
 public:
+    Storage(uint64_t startChips = 0) : storedChips(startChips) {}
+
     void Add(uint64_t chips)
     {     
         if (awaitingOrders > 0)
@@ -87,8 +88,7 @@ public:
 
     void Behavior()
     {
-        auto produced = hourlyChipProduction * Normal(1.0, 0.01);
-        globalStorage->Add(produced);
+        globalStorage->Add(hourlyChipProduction * Normal(1.0, 0.01));
         Activate(Time + 1);
     }
 
@@ -119,8 +119,7 @@ public:
 
     void Behavior()
     {
-        auto chipsToOrder = dailyChipConsumption * orderRate;
-        globalStorage->Retrieve(chipsToOrder);
+        globalStorage->Retrieve(dailyChipConsumption * orderRate);
         Activate(Time + HOURS_IN_DAY);
     }
 
