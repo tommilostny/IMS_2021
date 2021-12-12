@@ -9,8 +9,7 @@
 #define HOURS_IN_DAY 24
 #define DAYS_IN_YEAR 365
 
-#define NEW_FACTORY_CHIPS_YEARLY (43792982460)
-#define NEW_FACTORY_CHIPS_HOURLY (NEW_FACTORY_CHIPS_YEARLY / HOURS_IN_YEAR)
+#define NEW_FACTORY_UPGRADE_FACTOR 1.35
 
 class Storage
 {
@@ -90,7 +89,7 @@ public:
             {
                 std::cout << name << ": new factory created in " << month << "/" << year << ", increasing production from " << hourlyChipProduction;
 
-                hourlyChipProduction *= 1.4;//NEW_FACTORY_CHIPS_HOURLY;
+                hourlyChipProduction *= Normal(NEW_FACTORY_UPGRADE_FACTOR, 0.01);
                 
                 std::cout << " to " << hourlyChipProduction << std::endl;
             }
@@ -146,7 +145,7 @@ public:
             year++;
 
             for (auto consumer : consumers)
-                consumer->AddToOrderRate(Normal(0.1, 0.001));
+                consumer->AddToOrderRate(Normal(0.1, 0.01));
         }
         for (auto producer : producers)
             producer->UpdateProduction(month, year);
