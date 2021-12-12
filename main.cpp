@@ -88,12 +88,9 @@ public:
         {
             if (newFactoriesMonths[i] == month && newFactoriesYears[i] == year)
             {
-                newFactoriesMonths.erase(newFactoriesMonths.begin() + i);
-                newFactoriesYears.erase(newFactoriesYears.begin() + i);
-
                 std::cout << name << ": new factory created in " << month << "/" << year << ", increasing production from " << hourlyChipProduction;
 
-                hourlyChipProduction *= 1.5;//NEW_FACTORY_CHIPS_HOURLY;
+                hourlyChipProduction *= 1.4;//NEW_FACTORY_CHIPS_HOURLY;
                 
                 std::cout << " to " << hourlyChipProduction << std::endl;
             }
@@ -176,7 +173,7 @@ int main()
     std::vector<uint16_t> smicNewFactoryMonths = { 1, 1 };
     std::vector<uint16_t> smicNewFactoryYears = { 2022, 2024 };
 
-    std::vector<uint16_t> intelNewFactoryMonths = { 10, 11, 6, 6 };
+    std::vector<uint16_t> intelNewFactoryMonths = { 10, (uint16_t)(4 + Uniform(6, 9)), 6, 6 };
     std::vector<uint16_t> intelNewFactoryYears = { 2021, 2021, 2024, 2024 };
 
     std::vector<Producer*> producers = 
