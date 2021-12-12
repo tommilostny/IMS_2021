@@ -9,7 +9,7 @@
 #define HOURS_IN_DAY 24
 #define DAYS_IN_YEAR 365
 
-#define NEW_FACTORY_CHIPS_YEARLY (4379298246)
+#define NEW_FACTORY_CHIPS_YEARLY (43792982460)
 #define NEW_FACTORY_CHIPS_HOURLY (NEW_FACTORY_CHIPS_YEARLY / HOURS_IN_YEAR)
 
 class Storage
@@ -93,10 +93,9 @@ public:
 
                 std::cout << name << ": new factory created in " << month << "/" << year << ", increasing production from " << hourlyChipProduction;
 
-                hourlyChipProduction += NEW_FACTORY_CHIPS_HOURLY;
+                hourlyChipProduction *= 1.6;//NEW_FACTORY_CHIPS_HOURLY;
                 
                 std::cout << " to " << hourlyChipProduction << std::endl;
-                return;
             }
         }
         //std::cout << name << ": " << month << "/" << year << std::endl;
@@ -149,8 +148,8 @@ public:
             month = 1;
             year++;
 
-            //for (auto consumer : consumers)
-            //    consumer->AddToOrderRate(0.025);
+            for (auto consumer : consumers)
+                consumer->AddToOrderRate(0.1);
         }
         for (auto producer : producers)
             producer->UpdateProduction(month, year);
@@ -165,7 +164,7 @@ int main()
     Init(0, HOURS_IN_YEAR * SIMULATION_YEARS);
     auto globalStorage = new Storage(1000000);
 
-    std::vector<uint16_t> tsmcNewFactoryMonths = { 11, 1 };
+    std::vector<uint16_t> tsmcNewFactoryMonths = { 10, 1 };
     std::vector<uint16_t> tsmcNewFactoryYears = { 2021, 2024 };
 
     std::vector<uint16_t> samsungNewFactoryMonths = { 6 };
@@ -177,24 +176,27 @@ int main()
     std::vector<uint16_t> smicNewFactoryMonths = { 1, 1 };
     std::vector<uint16_t> smicNewFactoryYears = { 2022, 2024 };
 
+    std::vector<uint16_t> intelNewFactoryMonths = { 10, 11, 6, 6 };
+    std::vector<uint16_t> intelNewFactoryYears = { 2021, 2021, 2024, 2024 };
+
     std::vector<Producer*> producers = 
     {
-        new Producer(13000000, 8000, "TSMC", globalStorage, tsmcNewFactoryMonths, tsmcNewFactoryYears),
-        new Producer(3060000 * 12, 4000, "Samsung", globalStorage, samsungNewFactoryMonths, samsungNewFactoryYears),
-        new Producer(800000 * 12, 4000, "UMC", globalStorage, umcNewFactoryMonths, umcNewFactoryYears),
-        new Producer(120000 * 12, 8000, "SMIC", globalStorage, smicNewFactoryMonths, smicNewFactoryYears),
-        new Producer(159170967742, "Others", globalStorage, {}, {})
+        new Producer(13000000, 7000, "TSMC", globalStorage, tsmcNewFactoryMonths, tsmcNewFactoryYears),
+        new Producer(3060000 * 12, 3500, "Samsung", globalStorage, samsungNewFactoryMonths, samsungNewFactoryYears),
+        new Producer(800000 * 12, 3500, "UMC", globalStorage, umcNewFactoryMonths, umcNewFactoryYears),
+        new Producer(120000 * 12, 7000, "SMIC", globalStorage, smicNewFactoryMonths, smicNewFactoryYears),
+        //new Producer(159170967742, "Others", globalStorage, {}, {}),
+        new Producer(240842105263, "Intel", globalStorage, intelNewFactoryMonths, intelNewFactoryYears)
     };
 
     std::vector<Consumer*> consumers = 
     {
-        //new Consumer(6000000000, "Mobile", globalStorage),
         new Consumer(88000000000, "Automotive", globalStorage),
-        //new Consumer(240842105263, "Communications", globalStorage),
+        new Consumer(240842105263, "Communications", globalStorage),
         new Consumer(249333333333, "Computers", globalStorage),
         new Consumer(92631578947, "Consumer electronics", globalStorage),
         new Consumer(92631578947, "Industrial", globalStorage),
-        //new Consumer(7719298246, "Government", globalStorage),
+        new Consumer(7719298246, "Government", globalStorage),
     };
 
     for (auto producer : producers)
